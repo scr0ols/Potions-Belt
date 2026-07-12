@@ -1,8 +1,26 @@
 # Potion's Belt — Session notes
 
-## Session 1 (2026-07-13): planning, loader decision, old-code triage
+## Session 1 (2026-07-13): planning, loader decision, repo init
 
-**Summary: chose Fabric 1.21.11; old Fabric template is reusable, MCreator/NeoForge attempt discarded; PLAN.md written and awaiting confirmation.**
+**Summary: chose Fabric 1.21.11; plan confirmed by João (drinkable-only, bottles return to belt, vanilla drink time); repo initialized at project root and pushed to GitHub.**
+
+Decisions confirmed by João (details in PLAN.md "Decisions"):
+- v1 accepts only drinkable potions; splash/lingering later, own nuances.
+- Empty bottle returns to the belt: potions compact forward, bottle placed
+  after the last potion; bottles collected via vanilla double-click gather.
+  Watch during playtesting: compaction means number keys select the Nth
+  potion in the current queue, not a fixed loadout column.
+- Vanilla 1.6 s drink time — the belt must not change game balance.
+- Target 1.21.11 confirmed.
+
+Repo setup:
+- Repo root = the `Potion's Belt` folder (docs at root, Gradle project in
+  `potions-belt-fabric-1.21.11/`), remote `github.com/scr0ols/Potions-Belt`.
+- João moved the old Fabric template into the repo as
+  `potions-belt-fabric-1.21.11/`. Its standalone `.git` (1 local commit, no
+  remote) was removed; a backup bundle went to the session scratchpad.
+- Remote `dev` branch appeared on GitHub during the session (created by
+  João); work landed on `main`, no branch convention defined yet.
 
 - Inspected the two previous attempts in `D:\scr0ols\Dev\Minecraft Projects`:
   - `potions-belt-fabric-1.21.11`: standard fabric-example-mod template,
