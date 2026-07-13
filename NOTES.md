@@ -1,5 +1,67 @@
 # Potion's Belt — Session notes
 
+## Session 3 (2026-07-13): milestone 3 — belt GUI
+
+**Summary: the belt GUI works end-to-end and was verified in-game: sneak +
+right click opens a 3x9 "Potions Belt" screen (shulker texture placeholder),
+only drinkable potions go in (splash rejected on both drag and shift-click),
+contents persist in `DataComponents.CONTAINER` across close/reopen, and the
+belt itself is locked in place while its menu is open (click pickup and
+number-key swap both blocked).**
+
+What was added:
+- `PotionsBeltMenu`: `AbstractContainerMenu` with 27 `PotionSlot`s
+  (`mayPlace` = drinkable potion only) + player inventory, shulker slot
+  layout. `quickMoveStack` mirrors `ShulkerBoxMenu` — the potion filter is
+  honored because vanilla `moveItemStackTo` checks `mayPlace`.
+- `BeltInventory`: static load/save between the belt `ItemStack`'s
+  `DataComponents.CONTAINER` component and a `SimpleContainer(27)`.
+  Save copies each stack to avoid aliasing live slot stacks into the
+  (hash-cached) component. `isDrinkablePotion` = `stack.is(Items.POTION)`.
+- `PotionsBeltScreen` (client): `AbstractContainerScreen` on the vanilla
+  shulker box texture (same 3x9). Like `ShulkerBoxScreen`, needs
+  `++imageHeight` (that texture is 167px, not 166).
+- Wiring: `MenuType` registered in `PotionsBelt` (vanilla `MenuType`
+  constructor + `FeatureFlags.VANILLA_SET`, no extended data needed —
+  client menu starts with a dummy container, contents arrive via vanilla
+  menu sync); screen registered via `MenuScreens.register` in
+  `PotionsBeltClient`; `PotionsBeltItem.use()` opens the menu on sneak via
+  `SimpleMenuProvider` (plain right click still the milestone 4 stub).
+
+Belt-lock design (the "backpack in itself" edge case):
+- Player inventory slots use a `PlayerSlot` whose `mayPickup` returns false
+  whenever the slot holds a belt — covers click pickup, shift-click, and
+  drop (Q), wherever the belt sits, on both sides, with no index tracking.
+- That is NOT enough for `ClickType.SWAP` (number keys / offhand F): vanilla
+  reads the hotbar/offhand stack directly, bypassing slot checks. So
+  `clicked()` is overridden to swallow SWAP clicks whose swap target is a
+  belt. Verified in-game: pressing 1 over a grid slot does nothing.
+
+Persistence:
+- A `SimpleContainer` listener writes the component back on every content
+  change, plus a final save in `removed()`. Survived multiple close/reopen
+  cycles in-game, including the menu being closed by the pause menu.
+
+Lessons / notes:
+- **Verify mappings with `javap` before writing code**: the remapped
+  Minecraft jars live in `.gradle/loom-cache/minecraftMaven/...`. Checking
+  signatures there (blit overloads, `Inventory.getSelectedSlot`,
+  `MenuType` ctor, `MenuScreens.register` visibility) avoided compile
+  roulette; the only miss was `Level.isClientSide` now being private (use
+  `isClientSide()`).
+- 1.21.11 `GuiGraphics.blit` takes a `RenderPipeline` first arg
+  (`RenderPipelines.GUI_TEXTURED`).
+- In-game verification was done by driving the dev client with a Win32
+  SendInput PowerShell helper (screenshot → click → screenshot); the
+  computer-use tooling can't target a Gradle-launched `java.exe` window.
+  João was at the machine and verified sneak+right-click himself.
+- The vanilla container tooltip on the belt item (hover in any inventory)
+  doubles as a free contents preview — worth remembering for milestone 6.
+
+Left for next session (milestone 4): drinking — held right click,
+first-available selection, bottle-back-to-belt compaction in
+`BeltInventory`.
+
 ## Session 2 (2026-07-13): milestone 2 — skeleton builds and runs
 
 **Summary: template cleanup done (package rename, blocks/mixins dropped,
