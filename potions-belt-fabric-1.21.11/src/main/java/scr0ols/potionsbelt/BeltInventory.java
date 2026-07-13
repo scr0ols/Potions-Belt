@@ -41,4 +41,49 @@ public final class BeltInventory {
     public static boolean isDrinkablePotion(ItemStack stack) {
         return stack.is(Items.POTION);
     }
+
+    /** What the belt slots accept: drinkable potions, plus empty bottles (the drink byproduct). */
+    public static boolean isAcceptable(ItemStack stack) {
+        return isDrinkablePotion(stack) || stack.is(Items.GLASS_BOTTLE);
+    }
+
+    /** Row-major index (0..SIZE-1) of the first drinkable potion, or -1 if none. */
+    public static int firstPotionSlot(ItemStack belt) {
+        NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+        belt.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
+        for (int i = 0; i < SIZE; i++) {
+            if (isDrinkablePotion(items.get(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** True if the belt holds at least one drinkable potion (bottles don't count). */
+    public static boolean hasPotion(ItemStack belt) {
+        return firstPotionSlot(belt) >= 0;
+    }
+
+    /**
+     * Removes the potion at the given slot, in place: every other slot is
+     * left exactly as it was (no compaction/shifting), preserving whatever
+     * column layout the player set up. If keepPotion is true (creative),
+     * nothing is written back at all, matching vanilla creative drinking
+     * (the item is never actually consumed). Returns the potion that was at
+     * that slot, or ItemStack.EMPTY if it didn't hold one.
+     */
+    public static ItemStack takePotionAt(ItemStack belt, int slot, boolean keepPotion) {
+        NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+        belt.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
+
+        ItemStack potion = items.get(slot);
+        if (!isDrinkablePotion(potion)) {
+            return ItemStack.EMPTY;
+        }
+        if (!keepPotion) {
+            items.set(slot, new ItemStack(Items.GLASS_BOTTLE));
+            belt.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
+        }
+        return potion;
+    }
 }

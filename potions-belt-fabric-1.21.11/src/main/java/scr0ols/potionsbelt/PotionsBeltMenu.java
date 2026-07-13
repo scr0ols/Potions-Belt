@@ -106,7 +106,7 @@ public class PotionsBeltMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return BeltInventory.isDrinkablePotion(stack);
+            return BeltInventory.isAcceptable(stack);
         }
     }
 
