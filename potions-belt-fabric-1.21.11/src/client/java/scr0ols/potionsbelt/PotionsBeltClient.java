@@ -1,4 +1,4 @@
-package scr0ols.potionsbelt.modid;
+package scr0ols.potionsbelt;
 
 import net.fabricmc.api.ClientModInitializer;
 
