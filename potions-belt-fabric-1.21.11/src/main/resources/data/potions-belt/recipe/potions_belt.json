@@ -6,9 +6,9 @@
     " S "
   ],
   "key": {
-    "S": {"item": "minecraft:string"},
-    "L": {"item": "minecraft:leather"},
-    "B": {"item": "minecraft:glass_bottle"}
+    "S": "minecraft:string",
+    "L": "minecraft:leather",
+    "B": "minecraft:glass_bottle"
   },
   "result": {
     "id": "potions-belt:potions_belt",
