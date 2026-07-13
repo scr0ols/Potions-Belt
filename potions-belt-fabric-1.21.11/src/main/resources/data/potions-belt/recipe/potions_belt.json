@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SLS",
+    "SBS",
+    " S "
+  ],
+  "key": {
+    "S": {"item": "minecraft:string"},
+    "L": {"item": "minecraft:leather"},
+    "B": {"item": "minecraft:glass_bottle"}
+  },
+  "result": {
+    "id": "potions-belt:potions_belt",
+    "count": 1
+  }
+}

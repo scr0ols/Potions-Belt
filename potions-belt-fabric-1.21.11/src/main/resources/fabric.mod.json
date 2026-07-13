@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "potions-belt",
+	"version": "${version}",
+	"name": "Potion's Belt",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/potions-belt/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"scr0ols.potionsbelt.modid.PotionsBelt"
+		],
+		"client": [
+			"scr0ols.potionsbelt.modid.PotionsBeltClient"
+		]
+	},
+	"mixins": [
+		"potions-belt.mixins.json",
+		{
+			"config": "potions-belt.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
