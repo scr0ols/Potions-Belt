@@ -37,6 +37,9 @@ and the conversation itself. Do not switch to Portuguese mid-session.
 
 ## Git
 
+- Branch workflow: all development happens on `dev` (commit and push there).
+  `main` is the stable branch; merging `dev` into `main` is a manual decision
+  by João, done when a milestone is ready — never merge to `main` on your own.
 - NEVER add "Co-Authored-By: Claude" or any similar co-authorship line.
 - NEVER add "Generated with Claude", "🤖 Generated with Claude Code", or any
   similar AI-authorship signature/footer to commits, PR descriptions,
