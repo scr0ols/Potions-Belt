@@ -189,9 +189,10 @@ Maps onto the vanilla item-use system — no timers of our own:
 2. ~~Project skeleton builds and runs: belt item registered, texture, recipe;
    template cleanup (package rename, drop blocks/mixin examples, metadata).~~
    (done 2026-07-13)
-3. GUI: menu + screen + potion-only filter + component persistence.
-4. Drinking: held right click, first-available logic, bottle-to-belt
-   compaction.
+3. ~~GUI: menu + screen + potion-only filter + component persistence.~~
+   (done 2026-07-13)
+4. ~~Drinking: held right click, first-available logic, in-place bottle
+   replacement.~~ (done 2026-07-13)
 5. Column selection: key interception, payload, fallback logic.
 6. Polish: sounds, action bar feedback, tooltip (contents preview), edge-case
    testing pass.
