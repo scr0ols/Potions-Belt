@@ -1,5 +1,94 @@
 # Potion's Belt — Session notes
 
+## Session 4 (2026-07-13): milestone 4 — drinking
+
+**Summary: drinking is implemented and fully verified in-game — held right
+click drinks the first available potion (vanilla 1.6 s animation), replaces
+only that slot with a bottle, and every other slot is untouched. Unit tested
+(6 JUnit cases on `BeltInventory`). One design revision came out of
+playtesting: forward-compaction (the original plan) was replaced with
+in-place replacement after it broke João's column-based loadout.**
+
+What was added:
+- `PotionsBeltItem.use()`: plain right click checks `BeltInventory.hasPotion`
+  and calls `startUsingItem` (vanilla drink animation/timing comes from a new
+  `Consumables.DEFAULT_DRINK` component on the belt item, set in
+  `ModItems.java` — no custom timers). Empty/bottles-only belt: action bar
+  message + `SoundEvents.BUNDLE_INSERT_FAIL` (soft "leather" thud, picked
+  over the original harsh `DISPENSER_FAIL`), gated by `player.getCooldowns()`
+  so holding right click doesn't spam the sound (same pattern as vanilla
+  Ender Pearl).
+- `PotionsBeltItem.finishUsingItem()` (server-only): finds the first potion
+  slot via `BeltInventory.firstPotionSlot`, applies its effects through the
+  potion's own `Consumable.onConsume` (same code path as drinking a normal
+  potion — effects, stats, advancement trigger, sounds all vanilla), then
+  `BeltInventory.takePotionAt(belt, slot, keepPotion)` replaces *only that
+  slot* with an empty bottle. In creative (`keepPotion` true), the belt isn't
+  written to at all — matches vanilla, which doesn't consume the item.
+- `BeltInventory.isAcceptable()`: belt slots now also accept empty glass
+  bottles (not just drinkable potions), so a player can manually load bottles
+  too, not only receive them from a drink. Used by `PotionSlot.mayPlace` in
+  `PotionsBeltMenu`.
+- 6 JUnit tests in `src/test/java/.../BeltInventoryTest.java` (gappy belt,
+  full belt, bottles-only, empty belt, creative leaves the belt untouched,
+  `hasPotion`), run via `net.fabricmc:fabric-loader-junit` on the classpath
+  so real Minecraft classes (bootstrapped via
+  `SharedConstants.tryDetectVersion()` + `Bootstrap.bootStrap()`) are usable
+  in plain JUnit — added `test { useJUnitPlatform() }` to `build.gradle`.
+
+Design revision — compaction vs. in-place replacement (confirmed by
+playtesting): the original plan compacted every remaining potion forward in
+row-major order after a drink (`BeltInventory.takeFirstPotion`, since
+removed). João's actual usage was a 9-column loadout — 9 potion types, 3 of
+each stacked one per row per column (e.g. column 1 = Regeneration x3) — and
+compacting forward dragged potions from other columns/rows into column 1's
+place, which read as "randomizing" the belt and looked like a real bug even
+though the algorithm was doing what was written (verified via javap that
+`ItemContainerContents.fromItems`/`copyInto` preserve slot index and order —
+the bug was the compaction design itself, not those primitives). Replaced
+with `BeltInventory.firstPotionSlot()` + `takePotionAt(belt, slot,
+keepPotion)`: only the drunk slot changes, nothing shifts. This also
+sidestepped a second bug the old code had: it always removed the potion from
+the belt's data regardless of game mode, only conditionally skipping the
+bottle for creative — so a creative-mode drink could permanently lose a
+potion with no bottle returned. In-place replacement fixes this naturally,
+since creative now skips the write entirely. PLAN.md's "Decisions" section
+updated to record this as resolved (was previously flagged as an open risk
+to check during playtesting).
+
+In-game verification (João, two rounds):
+1. Column-loadout drink (survival): only the drunk slot becomes a bottle,
+   every other column/row untouched — OK.
+2. Same in creative: belt completely unchanged, effect still applies — OK.
+3. Cancel mid-drink (release early): nothing consumed — OK.
+4. Bottles-only belt (now placeable thanks to `isAcceptable`): no animation,
+   feedback shown — OK.
+5. Empty-belt sound: soft, no longer spams while right click is held — OK,
+   keeping as-is.
+6. Sneak+right click still opens the GUI — OK.
+
+Lessons / notes:
+- **In-game testing handoff**: driving the dev client via the SendInput
+  PowerShell helper (see session 3) burned a lot of Claude-side resources for
+  marginal benefit. From this session on, in-game verification is done by
+  asking João to test and report back, not by Claude driving input.
+- Verified via `javap` before writing code (as in session 3): `Item` use/
+  finishUsingItem signatures, `Consumable`/`Consumables` presets,
+  `ItemContainerContents.fromItems`/`copyInto` internals (index-preserving,
+  trims only trailing empty slots — ruled this out as the reordering bug's
+  cause), `ItemCooldowns` API, `SoundEvents.BUNDLE_INSERT_FAIL` as a
+  same-type drop-in for `DISPENSER_FAIL`.
+- Gradle daemon connection is flaky in this environment ("Could not connect
+  to the Gradle daemon" on first attempt after a period of inactivity) —
+  simply retrying the same `./gradlew` command succeeds; not a real build
+  problem.
+
+Milestone 4 done. Next session: milestone 5, column selection (number keys
+1-9 while drinking pick a column, row 1 -> 2 -> 3 fallback within it). The
+in-place replacement design from this session means column contents no
+longer drift over time, which should make milestone 5 more predictable than
+originally planned.
+
 ## Session 3 (2026-07-13): milestone 3 — belt GUI
 
 **Summary: the belt GUI works end-to-end and was verified in-game: sneak +

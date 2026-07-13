@@ -12,16 +12,17 @@ instead, falling back row 1 -> row 2 -> row 3.
 1. **Drinkable potions only** for v1. Splash and lingering are rejected by
    the slot filter; support for them is a possible later feature with its own
    mechanics (throwing).
-2. **Empty bottles return to the belt, not the player inventory.** After a
-   potion is drunk, the remaining potions shift forward to close the gap
-   (row-major order preserved) and the empty bottle is placed right after the
-   last potion. Bottles occupy one slot each; in the GUI the player collects
-   them with vanilla double-click gather (up to a full stack of 64 in hand).
-   *Consequence to be aware of:* because potions compact forward on every
-   drink, a number key selects "the Nth potion currently in row 1", not a
-   fixed loadout position. If fixed columns per potion type turn out to be
-   the better UX, the alternative is in-place replacement (bottle stays in
-   the drunk potion's slot, no shifting) — flag it during playtesting.
+2. **Empty bottles return to the belt, not the player inventory — in place.**
+   *(Revised 2026-07-13 after milestone 4 playtesting.)* The originally
+   planned "compact forward" behavior (shift every later potion forward to
+   close the gap) was tried and rejected: it moved potions across rows,
+   destroying the column-based loadout players naturally build (e.g. column 1
+   = Regeneration x3, one per row). The confirmed behavior instead is
+   **in-place replacement**: drinking a potion turns *only that slot* into an
+   empty bottle; every other slot is untouched. This also makes milestone 5's
+   column selection straightforward — a column's contents don't drift over
+   time. Bottles occupy one slot each; in the GUI the player collects them
+   with vanilla double-click gather (up to a full stack of 64 in hand).
 3. **Vanilla drink time (1.6 s / 32 ticks).** The belt is a convenience item;
    it must not change game balance.
 4. **Target: Minecraft 1.21.11**, Java 21, Mojang official mappings.
@@ -122,9 +123,10 @@ wraps read/modify/write of this component.
   drinking).
 - `PotionsBeltMenu`: 27 slots backed by a `SimpleContainer` loaded from the
   component; written back on close/change. Slots override `mayPlace` to
-  accept only drinkable potions — the player cannot place bottles (or
-  anything else) in, but bottles produced by drinking sit in slots and can be
-  picked up / double-click gathered normally.
+  accept drinkable potions and empty glass bottles (`BeltInventory.
+  isAcceptable`) — nothing else can be placed in, but bottles (whether
+  produced by drinking or placed manually) sit in slots and can be picked up
+  / double-click gathered normally.
 - The hotbar slot holding the belt itself is locked while the menu is open
   (standard "backpack-in-itself" protection).
 
@@ -135,10 +137,10 @@ Maps onto the vanilla item-use system — no timers of our own:
   animation, vanilla 32 ticks = 1.6 s, same as a normal potion).
 - `finishUsingItem()` (server): resolve target slot — pending column from
   `BeltSelections` if set, else first potion scanning row 1 left to right,
-  then rows 2 and 3 (bottles are skipped) — remove the potion, apply its
-  `PotionContents` effects, then rewrite the belt: remaining potions
-  compacted forward in row-major order, existing bottles after them, plus
-  the new empty bottle (skipped in creative, matching vanilla).
+  then rows 2 and 3 (bottles are skipped) — apply its `PotionContents`
+  effects, then replace *only that slot* with an empty bottle (in place, no
+  shifting of any other slot). In creative, the belt isn't written to at all
+  (matches vanilla: creative drinking doesn't consume the item).
 - Releasing early cancels naturally (vanilla use mechanics); nothing is
   consumed because removal happens only at finish.
 
@@ -163,7 +165,8 @@ Maps onto the vanilla item-use system — no timers of our own:
   finish with feedback (potion is only removed server-side at
   `finishUsingItem`, so nothing is lost).
 - **Number keys when not drinking**: untouched — vanilla hotbar switching.
-- **Belt inside another belt**: impossible; slots accept only potions.
+- **Belt inside another belt**: impossible; slots accept only potions and
+  empty bottles.
 - **Shift-clicking wrong items into the GUI**: rejected by `quickMoveStack`
   respecting the same filter.
 - **Belt full of potions when one is drunk**: never overflows — the bottle
