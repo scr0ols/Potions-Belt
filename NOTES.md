@@ -1,5 +1,390 @@
 # Potion's Belt — Session notes
 
+## Session 6 (2026-07-14): milestone 6 — sticky column default + HUD preview
+
+**Summary: implemented the design settled at the end of session 5 (see that
+session's 2026-07-14 entries below) — column selection is now a persistent
+per-player default instead of a one-shot pending value, with fallback to
+first-available on a plain right click, plus a HUD icon previewing the
+potion about to be drunk. Build and all 11 unit tests pass unchanged (no
+test-covered logic changed — `firstPotionSlotInColumn`/`firstPotionSlot`
+themselves are untouched, only their caller). In-game verification pending —
+João to test.**
+
+What changed:
+- `BeltSelections`: renamed concept from "pending column, cleared per drink"
+  to "sticky default column, cleared only on disconnect". `get()` now
+  returns `1` (not `-1`) when the player has never picked a column, matching
+  "default starts at column 1". `set()`/`clear()` unchanged in shape.
+- `PotionsBeltItem.finishUsingItem()`: always resolves via the player's
+  default column first (`BeltSelections.get`); if that column is empty,
+  falls back to `BeltInventory.firstPotionSlot` (first potion anywhere)
+  instead of aborting. Only aborts (feedback + sound) if the fallback is
+  also empty, i.e. the whole belt is empty. No longer calls
+  `BeltSelections.clear` — the default persists across drinks now.
+- `PotionsBeltItem.releaseUsing()` **removed entirely**: its only job was
+  clearing the pending column on early release/interrupt, which is exactly
+  what should *not* happen anymore. Item's default no-op behavior applies.
+- `onColumnSelected()` (mid-drink number-key press) is otherwise unchanged:
+  still updates the default immediately (even if empty), still cuts the
+  current drink short via `stopUsingItem()` if the picked column is empty —
+  that specific-drink-cancel UX from the 2026-07-14 follow-up fix (see
+  session 5 below) is independent of the sticky-default change and stays as
+  the one case where an empty column doesn't fall back.
+- `BeltInventory.getItem(belt, slot)`: new read-only accessor (no mutation),
+  added so the HUD preview can read the actual `ItemStack` at a resolved
+  slot without going through `takePotionAt` (which would consume it).
+- `ClientBeltState` (new, client-only): static `int defaultColumn` mirroring
+  the server's `BeltSelections` value for the local player. Set the instant
+  `KeybindsMixin` sends a `SelectColumnPayload` (no server round trip needed
+  — the client already knows what it just picked), reset to `1` on
+  `ClientPlayConnectionEvents.DISCONNECT`. No new S2C payload, as planned.
+- `BeltHud` (new, client-only): a Fabric HUD element rendering a preview icon
+  of the potion about to be drunk, registered via
+  `HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, ...)` in
+  `PotionsBeltClient`. Visible whenever the belt is held in main hand or
+  offhand (checked directly, not tied to `isUsingItem()`). Resolves the
+  preview with the *exact same calls* `finishUsingItem` uses
+  (`BeltInventory.firstPotionSlotInColumn` against `ClientBeltState`'s
+  column, falling back to `firstPotionSlot`, then `getItem` to read the
+  stack) so preview and actual drink can't drift apart by construction.
+  Positioned like vanilla's offhand-item hotbar indicator (same sprites,
+  `hud/hotbar_offhand_left`/`_right`, same 29x24 box and item-icon inset)
+  but mirrored to the side matching the player's main arm — i.e. the
+  opposite side from where vanilla draws the *real* offhand item — so the
+  two icons never overlap even when the belt is in the offhand.
+
+Design/API notes (verified via `javap` + sources jars before writing code,
+same practice as prior sessions):
+- Fabric API 0.141.3 (1.21.11) uses a newer HUD layer system than
+  `HudRenderCallback`: `net.fabricmc.fabric.api.client.rendering.v1.hud.
+  HudElementRegistry` (`addFirst`/`addLast`/`attachElementBefore`/
+  `attachElementAfter`/`replaceElement`), with named vanilla anchors in
+  `VanillaHudElements` (e.g. `HOTBAR`). `attachElementAfter(afterThis,
+  newId, element)` inherits the anchor's render condition — confirmed via
+  the module's sources jar that this means our element automatically
+  respects the same "hide GUI" (F1) / screen-open suppression the hotbar
+  itself already has, no manual guard needed.
+  `HudElement.render(GuiGraphics, DeltaTracker)` is the functional method.
+- Exact vanilla offhand-indicator layout, read via `javap -c` disassembly of
+  `Gui.renderItemHotbar`/`renderSlot` against the mapped client jar (no
+  decompiler available, so worked from bytecode operands directly): hotbar
+  background is `centerX-91, guiHeight-22, 182x22`; the offhand slot sprite
+  is `29x24` at `centerX-91-29` (drawn when `mainArm.getOpposite() ==
+  LEFT`, i.e. default right-handed play) or `centerX+91` (opposite case),
+  both at `y = guiHeight-23`; the item icon inside is inset to
+  `(boxX+3, guiHeight-19)` on the left sprite and `(boxX+10, guiHeight-19)`
+  on the right one (the two sprites aren't symmetric paddings — read
+  directly off the bytecode rather than guessed). `BeltHud` reuses these
+  exact numbers, substituting `mainArm` for `mainArm.getOpposite()` to land
+  on the opposite side from the real indicator.
+- `GuiGraphics.renderItem(ItemStack, int, int)` and `renderItemDecorations
+  (Font, ItemStack, int, int)` are the plain (non-entity-seeded) item-icon
+  draw calls, sufficient here since potions don't need the bob/seed
+  animation `renderItem(LivingEntity, ...)` provides for hand-held items.
+- `ClientPlayConnectionEvents.JOIN`/`DISCONNECT` (fabric-networking-api-v1)
+  give clean hooks for client-side session-scoped state; used `DISCONNECT`
+  only (mirrors the server's own disconnect-only clear — no need for a
+  separate `JOIN` reset since a fresh client launch already starts at `1`).
+
+Not yet done this session (left for next): sounds, and the milestone-6
+edge-case testing pass. In-game verification of everything built this
+session (sticky default across multiple drinks/sessions, plain-right-click
+fallback behavior, HUD icon/name showing/hiding correctly in both hands and
+updating live, the new keybinds, scroll cycling, and the open-menu key) is
+also still open — João to test.
+
+**Follow-up (2026-07-14): potion name label + full redesign of column/menu
+input, from João's first round of in-game feedback.** Playtesting the HUD
+icon surfaced two things:
+
+1. The icon alone didn't say *which* potion it was previewing. Fix:
+   `BeltHud` now also draws the potion's display name (`drawCenteredString`,
+   white, centered above the icon) whenever the preview is non-empty — folds
+   the still-open "tooltip contents preview" milestone-6 item into this
+   feature instead of a separate hover tooltip.
+2. A bigger UX problem: right click was overloaded (drink *and*, via
+   sneak/mid-drink hotbar keys, the only way to touch column selection or
+   open the menu), which made drinking feel forced/eager — you had to
+   commit to a drink just to change your pick. Discussed with João; agreed
+   direction: **fully decouple selection and menu-opening from right click**,
+   using dedicated, remappable Fabric keybindings instead of hijacking
+   vanilla hotbar keys or overloading sneak. Sneak was explicitly rejected
+   as the modifier despite being the existing GUI-open convention — João's
+   reasoning: it's a key that "directly influences gameplay" (sneaking
+   protects against fall damage/ledges), so gating belt actions behind it
+   creates situations where a player needs to sneak for movement safety and
+   use the belt at the same time. Full remappability was the explicit
+   end goal (João: doesn't know each player's keyboard/hand setup, wants
+   everyone able to bind these however is convenient for them).
+
+Implemented:
+- `PotionsBeltItem.use()` simplified: right click is now unconditionally
+  "drink" — the `isShiftKeyDown()` branch that opened the menu is gone
+  entirely. Sneak state no longer changes right-click behavior at all.
+- `OpenBeltMenuPayload` (new, C2S, empty record via `StreamCodec.unit`):
+  sent when the new "Open Belt Menu" keybind is pressed.
+  `PotionsBeltItem.openMenu(player)` (new, server-side) does what `use()`'s
+  sneak branch used to do, just triggered independently.
+- `BeltKeybinds` (new, client-only): registers **9 independent "Select
+  Column N" keybindings** plus **one "Open Belt Menu" keybinding** via
+  `KeyBindingHelper.registerKeyBinding`, all under a new "Potions Belt"
+  category in the vanilla Controls screen, all **unbound by default** (a
+  hardcoded default risks colliding with a given player's existing
+  movement/mod bindings — matches João's "let each player set it up"
+  requirement more literally than picking defaults ourselves would).
+  Polled once per client tick via `ClientTickEvents.END_CLIENT_TICK`
+  (`consumeClick()`, same idiom the old mixin used on vanilla's hotbar
+  keys) — only acts while the belt is held in either hand; queued clicks
+  are drained (not deferred) while it isn't.
+- `MouseScrollMixin` (new, client mixin into `MouseHandler#onScroll`):
+  João also asked for scroll-wheel cycling as a second, parallel selection
+  method ("1-9 hotkeys plus scroll is enough for this phase, don't want to
+  overload the player with more"). While the belt is held and no screen is
+  open, scrolling cycles the default column ±1 (wrapping 1-9) instead of
+  switching the hotbar slot. No Fabric API event exists for world mouse
+  scroll (checked every fabric-api submodule jar for a "Scroll" class —
+  only screen-scoped scroll hooks exist in `fabric-screen-api-v1`), so this
+  mixes into vanilla's own `MouseHandler#onScroll` and cancels it for this
+  one case, read via `javap -c` disassembly (no decompiler available) to
+  find the exact `ScrollWheelHandler.onMouseScroll`/`Inventory.
+  setSelectedSlot` call vanilla makes at the end of that method — confirmed
+  there's no earlier hook point to redirect instead of cancelling outright.
+  **Known trade-off, called out to João, not yet contested**: this steals
+  scroll-to-switch-hotbar-slot for as long as the belt is actively held in
+  a hand; switching away by scroll requires releasing the belt first (or
+  using the vanilla number keys, which stay completely free).
+- `KeybindsMixin` **stripped down significantly**: the old `handleKeybinds`
+  hotbar-key-interception loop is gone (vanilla hotbar 1-9 are no longer
+  touched at all, by anything, ever). What's left: the HEAD injection on
+  `handleKeybinds` now only clears `suppressBeltDrinkUntilRelease` on
+  key-release (unchanged logic, just the surrounding loop removed), the
+  `startUseItem` block (unchanged), and a new public
+  `onColumnPicked(LocalPlayer, int)` entry point that both `BeltKeybinds`
+  and `MouseScrollMixin` call — centralizes "mirror into `ClientBeltState`,
+  check for the mid-drink-empty-column cancel case, send
+  `SelectColumnPayload`" so the two input methods can't drift in behavior.
+- `PotionsBeltItem.isHeldBy(Player)` (new, common, static): the
+  "belt in main hand or offhand" check, previously duplicated per-mixin,
+  now shared by `BeltKeybinds`, `KeybindsMixin`, and `MouseScrollMixin`
+  (`BeltHud`'s own `heldBelt` stays separate since it needs the actual
+  `ItemStack`, not just a boolean).
+
+Design/API notes (verified via `javap` + sources jars before writing code):
+- `KeyMapping.Category` is a record wrapping an `Identifier` as of this MC
+  version (no longer a plain enum/string) — created via
+  `KeyMapping.Category.register(Identifier)`; its Controls-screen label
+  comes from `Component.translatable(id.toLanguageKey("key.category"))`,
+  i.e. lang key `key.category.<namespace>.<path>`. Individual `KeyMapping`
+  names are used directly as their own lang keys, matching vanilla's
+  `key.attack`-style convention.
+- `new KeyMapping(name, InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.
+  getValue(), category)` is the unbound-by-default constructor call —
+  `InputConstants.UNKNOWN.getValue()` avoids pulling in a direct LWJGL/GLFW
+  import just for the sentinel int.
+  `net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.
+  registerKeyBinding` is the Fabric-side registration call (confirmed via
+  that module's sources jar; its own doc example still shows the pre-1.21.2
+  `KeyBinding.Category.MISC` API, now stale — verified the real signature
+  against the mapped 1.21.11 `KeyMapping` class directly instead of trusting
+  the doc comment).
+- Confirmed no generic Fabric API mouse-scroll event exists in 0.141.3 by
+  grepping every `fabric-api` submodule jar for scroll-related classes —
+  only `fabric-screen-api-v1` has scroll hooks, and those are Screen-scoped
+  (`ScreenEvents`/similar), not usable for world/hotbar scroll.
+  `net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.
+  END_CLIENT_TICK` is the tick hook used for polling `BeltKeybinds`.
+
+Build and all 11 unit tests pass (no test-covered logic changed — this is
+all input/networking wiring, not `BeltInventory` slot-picking logic).
+In-game verification of this whole redesign is still open.
+
+**Bug found via `runClient` (2026-07-14): `KeybindsMixin` crashed the client
+at startup.** João ran `runClient` right after the redesign above and hit an
+immediate mixin-apply crash; `run/logs/latest.log` had the real error:
+`InvalidMixinException: Mixin ... KeybindsMixin ... contains non-private
+static method onColumnPicked(...)`. Root cause: `onColumnPicked` had been
+added as a `public static` helper directly on the `@Mixin(Minecraft.class)`
+class so `BeltKeybinds` and `MouseScrollMixin` could call it — but a mixin
+class is dissolved into its target class at load time and Sponge Mixin only
+accepts recognized injector methods (or `@Shadow`/`@Unique` members) inside
+one; a plain public static method with no annotation is invalid and fails
+the whole mixin apply, which crashes Minecraft before the window even opens
+(mixin transformation runs at classload, ahead of any game logic). This is
+exactly the kind of error the build/test suite can't catch — `./gradlew
+build` compiles and unit-tests fine regardless, since it's a bytecode-apply
+failure Sponge Mixin only raises when the target class is actually
+transformed at runtime. Lesson: any mixin class that needs to expose logic
+to *other* classes must not do it directly — move that logic to a plain
+(non-mixin) class instead.
+
+Fix: moved `onColumnPicked` (and the `suppressDrinkUntilRelease` flag it
+touches) off `KeybindsMixin` and onto `ClientBeltState`, which was already
+the natural home for client-side belt-selection state. `KeybindsMixin` now
+contains *only* its two private `@Inject` methods and nothing else — the
+minimum a mixin class should ever hold. `BeltKeybinds` and
+`MouseScrollMixin` now call `ClientBeltState.onColumnPicked(...)` directly.
+Rebuilt clean, all 11 tests still pass; in-game re-verification (does it
+actually launch now, plus the full checklist from before) still pending.
+
+**Playtest round 2 (2026-07-14): full checklist results from João, plus a
+real design flaw in the 9-separate-column-keybinds approach.** Results
+against the checklist above (A-G, items 1-20): everything passed except
+6, 10, and 11 (16 untested — couldn't reconnect to check disconnect reset).
+Two real fixes came out of it, plus one new feature request:
+
+1. **Item 6 (column keys) failed for a genuine reason, not user error.**
+   João bound "Select Column 1".."9" to physical keys "1".."9" (the obvious
+   choice) and only column 1 worked. Root cause: those are also vanilla's
+   own default hotbar-slot keybindings. `KeyMapping.click()` fires for every
+   mapping bound to a key, so pressing "3" both (a) let vanilla's own
+   `handleKeybinds()` switch the hotbar to slot 3, *and* (b) queued a click
+   on our "Select Column 3" mapping — but our polling ran on
+   `ClientTickEvents.END_CLIENT_TICK`, which fires *after* `handleKeybinds()`
+   within the same tick. By the time we checked `isHeldBy(player)`, the
+   hotbar had already switched away from the belt (unless the belt happened
+   to already be sitting in slot 3, which is exactly why key "1" "worked" —
+   the belt was in hotbar slot 1). Not a Minecraft limitation ("only one key"
+   per João's guess) — a same-tick ordering collision from reusing physical
+   keys vanilla already owns.
+
+   João's own proposed fix was the right one: gate column selection behind
+   a held modifier key (his examples: Shift or V) instead of giving each
+   column its own binding, i.e. bring back something like milestone 5's
+   "hotbar keys mean something else while X is held" shape, but with X now
+   a real remappable `KeyMapping` instead of hardcoded sneak. Implemented:
+   the 9 "Select Column N" keybindings are gone, replaced by one
+   `BeltKeybinds.SELECT_MODIFIER` keybinding (unbound by default). While
+   it's held and the belt is held, `KeybindsMixin` drains vanilla's own
+   `keyHotbarSlots[0..8]` clicks (same trick milestone 5 used) and
+   reinterprets them as column picks — this has to stay a `handleKeybinds`
+   HEAD injection (not a tick event) specifically so the drain happens
+   *before* vanilla's own hotbar-switch loop later in the same method, which
+   is what actually avoids the collision this time (vanilla never sees the
+   click while the modifier is down). "Open Belt Menu" is unaffected, still
+   its own separate keybind.
+2. **Item 10: scroll direction was backwards.** Scrolling down moved the
+   column left; João wanted down = forward/right. One-line fix in
+   `MouseScrollMixin`: flipped the `yOffset > 0 ? ... : ...` ternary.
+3. **New request: the vanilla "Open/Close Inventory" key (E) should open
+   the belt menu instead of the player inventory when the belt is the
+   selected (main hand) item.** João's reasoning, paraphrased: right now
+   opening the menu depends entirely on a brand-new custom keybind
+   (`Open Belt Menu`) the player has to discover and bind themselves;
+   reusing E is zero-config and matches an established pattern from other
+   "bag"-style mods. Implemented as a third `handleKeybinds` HEAD injector
+   in `KeybindsMixin`: drains `client.options.keyInventory`'s click when the
+   main-hand item is the belt, sending `OpenBeltMenuPayload` instead of
+   letting vanilla open the plain inventory screen. Deliberately scoped to
+   main hand only (matches "the selected item," and means a belt sitting
+   only in the offhand doesn't block normal inventory access via E). No
+   downside to losing "plain inventory via E" while the belt is in main
+   hand, since `PotionsBeltMenu` already includes the full player inventory
+   grid at the bottom (same shape as a shulker box screen) — nothing is
+   actually inaccessible, just presented alongside the belt's 27 slots
+   instead of alone. The dedicated "Open Belt Menu" keybind stays too, as
+   an alternative for players who'd rather not give up E's vanilla meaning
+   at all (e.g. by leaving it bound to something else, since both roads
+   lead to the same `OpenBeltMenuPayload`).
+
+Note for next session: **`./gradlew build`/`test` cannot catch mixin-apply
+errors** like the `KeybindsMixin` crash above — Sponge Mixin only validates
+a mixin when its target class is actually loaded through Fabric Loader's
+Knot classloader, which only happens when the game actually launches, not
+during plain JUnit tests. A green build is necessary but not sufficient
+proof a mixin change is safe; `runClient` (or in-game testing) is the only
+real check for that class of bug.
+
+Build and all 11 tests pass after this round's changes too. In-game
+re-verification of items 6, 10, and 11, plus the new E-key behavior, is the
+next thing João should test.
+
+**Playtest round 3 (2026-07-14): modifier/E-key redesign fully retested,
+one more scroll bug found, belt-lock removed, settings menu scoped for
+milestone 8.** Checklist results: items 1-3, 5-13, 15 all OK. Item 4 was
+functionally OK but surfaced a real gap — the select-modifier gates the
+hotbar-key column picks correctly, but scroll cycling (`MouseScrollMixin`)
+had no such gating and fired on scroll alone, whenever the belt was held.
+Fixed: scroll cycling now also requires `BeltKeybinds.SELECT_MODIFIER.
+isDown()`, matching the hotbar-key path exactly — holding the belt without
+the modifier leaves scroll as plain vanilla hotbar-switching, in both hands.
+
+Item 14 (moving/reorganizing the belt in inventory while its menu is open)
+was NOK, and João found the actual cause himself: session 3's
+"backpack-in-itself" lock (`PotionsBeltMenu.PlayerSlot#mayPickup` returning
+false for a belt, plus a `clicked()` override blocking SWAP clicks that
+would move one) — confirmed via code read, unrelated to anything changed
+this session, just newly annoying now that E opens the menu so much more
+casually than the old deliberate sneak+right-click did. João's call:
+**keep vanilla behavior "at almost all costs"** — Minecraft already lets
+you Q-drop/drag items around while their own container-adjacent GUIs are
+open elsewhere, and restricting that here isn't worth the friction, as long
+as it can't be turned into a duplication exploit. Reviewed for that
+specifically before removing anything: moving/dropping the belt only ever
+relocates the *same* `ItemStack` object the menu's `beltStack` field and
+`PotionSlot`s already reference (vanilla inventory manipulation reassigns
+references, it doesn't copy), so nothing new is ever created; and
+`PotionSlot.mayPlace` already independently rejects the belt item from
+being placed into its own 27-slot grid (it's neither a potion nor a glass
+bottle), so "belt inside itself" was never actually dependent on the lock
+we just removed. No dupe path found. Removed both the `mayPickup` override
+and the `clicked()` SWAP block entirely — `PlayerSlot` had no other purpose
+so the whole inner class is gone, player-inventory slots are now plain
+vanilla `Slot`s. Deliberately did *not* add any "close the menu if the belt
+leaves the inventory" logic (`stillValid` still always returns `true`) —
+wasn't asked for, and the 27 slots continuing to show/edit whichever
+`ItemStack` the menu opened with, even after it's dropped, is harmless
+(same non-dupe reasoning: still just one object, no duplication, purely a
+cosmetic "still editing a stack that's now elsewhere" state until the menu
+is manually closed).
+
+Also discussed, deliberately deferred rather than built now: a real
+settings menu for the mod, prompted by two things João raised while
+picking apart today's defaults — the scroll direction we just hardcoded
+might not suit everyone, and there's a genuine alternate design for
+opening the belt (E always opens the *normal* inventory screen, taller,
+with an added "Potions Belt" tab down the left edge like vanilla's own
+recipe-book/stats tabs, rather than jumping straight to the standalone
+27-slot screen) that's a bigger, config-worthy behavioral choice rather
+than a fixed default. Recorded as milestone 8 in PLAN.md with all three
+candidate settings (scroll direction, "no pre-selector required" mode, the
+combined inventory+belt tab) — not started, no config persistence or
+settings screen exists yet.
+
+Build and all 11 tests pass after this round's changes too (scroll
+modifier-gating, belt-lock removal). In-game re-verification of the fixed
+scroll gating and the now-unlocked belt movement is the next thing to test.
+
+**Playtest round 4 (2026-07-14): both fixes confirmed, session closed out.**
+5/5 OK: scroll without the modifier is plain vanilla hotbar-switching in
+both hands; scroll with the modifier held cycles the column correctly in
+the (now corrected) direction; Q-dropping and drag-relocating the belt out
+of its own open menu both work normally with contents intact on reopen; and
+the belt still can't be placed into its own 27-slot grid, confirming the
+lock removal didn't open a self-containment hole. Everything built this
+session (sticky default column, HUD icon+name preview, the keybind/E-key
+redesign replacing sneak+right-click and mixin-hijacked hotbar keys, the
+select-modifier + scroll column selection, and the belt-lock removal) is
+now in-game verified. Session done; milestone 6 is complete except sounds
+and a broader edge-case pass, both explicitly deferred (not attempted this
+session). Milestone 8 (configurable settings) is scoped in PLAN.md but not
+started — next real candidate for a future session, alongside milestone 6's
+remaining sounds/edge-case items.
+
+**Environment note (2026-07-14, recurrence): Gradle daemon loopback connect
+timeouts, separate from the earlier WMI `runClient` hang.** Mid-session,
+`./gradlew build` started failing every attempt with `Could not connect to
+the Gradle daemon` / `Connection timed out: getsockopt` on `127.0.0.1` —
+distinct from the "first attempt after inactivity" daemon flake documented
+in session 4 (that one succeeds on a plain retry; this one didn't across ~5
+attempts, `--no-daemon`, and `--stop` + retry). The one full build that did
+run (before this started) was clean: `BUILD SUCCESSFUL`, all 11 tests
+passed, with every source change from this session already in place — so
+the code itself is verified; this is purely local networking, matching the
+"correlated with ProtonVPN churning the network stack" pattern from the
+WMI note above. If this recurs, check VPN state and loopback connectivity
+first before assuming a real build problem.
+
 ## Session 5 (2026-07-13): milestone 5 — column selection
 
 **Summary: number-key column selection implemented as planned (client mixin
@@ -187,7 +572,7 @@ implementing (not yet built). Two parts:
    mirror the default column locally instead of waiting on the server.
 
 Implementation (persistent-selection semantics, HUD rendering, exact
-placement) is next session's work.
+placement): done in session 6, see that entry above.
 
 ## Session 4 (2026-07-13): milestone 4 — drinking
 
