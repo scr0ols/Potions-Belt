@@ -3,7 +3,8 @@
 	"package": "scr0ols.potionsbelt.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"KeybindsMixin"
+		"KeybindsMixin",
+		"MouseScrollMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -30,6 +30,9 @@ public class PotionsBelt implements ModInitializer {
 		PayloadTypeRegistry.playC2S().register(SelectColumnPayload.TYPE, SelectColumnPayload.STREAM_CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(SelectColumnPayload.TYPE,
 				(payload, context) -> PotionsBeltItem.onColumnSelected(context.player(), payload.column()));
+		PayloadTypeRegistry.playC2S().register(OpenBeltMenuPayload.TYPE, OpenBeltMenuPayload.STREAM_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(OpenBeltMenuPayload.TYPE,
+				(payload, context) -> PotionsBeltItem.openMenu(context.player()));
 		ServerPlayConnectionEvents.DISCONNECT.register(
 				(handler, server) -> BeltSelections.clear(handler.getPlayer()));
 

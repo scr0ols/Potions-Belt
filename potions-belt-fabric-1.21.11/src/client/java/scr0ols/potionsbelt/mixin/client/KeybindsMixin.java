@@ -7,74 +7,96 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import scr0ols.potionsbelt.BeltInventory;
+import scr0ols.potionsbelt.BeltKeybinds;
+import scr0ols.potionsbelt.ClientBeltState;
+import scr0ols.potionsbelt.OpenBeltMenuPayload;
 import scr0ols.potionsbelt.PotionsBeltItem;
-import scr0ols.potionsbelt.SelectColumnPayload;
 
 /**
- * Client-side handling for the belt's hotbar-key column selection.
+ * Vanilla-internals glue that has to run inside Minecraft#handleKeybinds
+ * itself, ahead of vanilla's own key handling later in that same method --
+ * a plain Fabric tick event fires too late to stop vanilla from having
+ * already acted on a click. This class only ever holds private injector
+ * methods (a @Mixin class can't expose normal callable methods -- Mixin
+ * dissolves it into its target at load time; shared logic lives in
+ * ClientBeltState instead).
  *
- * While the player is drinking from the belt, hotbar keys 1-9 pick a column
- * instead of switching the held slot (intercepted at the head of
- * handleKeybinds() so the click is drained via consumeClick() before
- * vanilla's own hotbar-switch loop later in the same method gets to it).
+ * Two things happen here:
+ * - While BeltKeybinds.SELECT_MODIFIER is held and the belt is held, the
+ *   vanilla hotbar keys 1-9 are drained via consumeClick() (so the hotbar
+ *   slot does NOT switch) and reinterpreted as column picks. This has to be
+ *   gated behind a modifier: binding column-select directly to the bare 1-9
+ *   keys collided with vanilla's own hotbar-slot keybindings sharing the
+ *   same physical keys (see NOTES.md 2026-07-14) -- draining here, before
+ *   vanilla's own hotbar-switch loop runs later in handleKeybinds, is what
+ *   avoids that collision.
+ * - The vanilla "Open/Close Inventory" key, when the belt is the selected
+ *   (main hand) item, opens the belt menu instead of the player inventory.
  *
- * If the picked column is empty the server cancels the drink, but right click
- * is typically still held, which would immediately re-trigger a new drink of
- * the first available potion. To match "an empty selection ends this belt use"
- * we set {@link #suppressBeltDrinkUntilRelease} on an empty pick and block
- * startUseItem() for the belt until the use key is released, forcing a fresh
- * press before another drink can start. Picking a column that has a potion is
- * unaffected, and plain right click (no column) still drinks first-available.
+ * Both funnel through ClientBeltState#onColumnPicked / OpenBeltMenuPayload,
+ * the same entry points BeltKeybinds' own dedicated "Open Belt Menu" key and
+ * MouseScrollMixin's scroll cycling use, so no input method can drift from
+ * another in behavior.
+ *
+ * If a column pick (via any input method) turns out empty while the player
+ * is already mid-drink, the server cancels that drink (see
+ * PotionsBeltItem#onColumnSelected). Right click is typically still held at
+ * that point, which would immediately re-trigger a new drink of the first
+ * available potion. To match "an empty pick ends this belt use" we set
+ * ClientBeltState's suppression flag and block startUseItem() for the belt
+ * until the use key is released, forcing a fresh press before another drink
+ * can start.
  */
 @Mixin(Minecraft.class)
 public class KeybindsMixin {
 
-    private static boolean suppressBeltDrinkUntilRelease = false;
-
     @Inject(method = "handleKeybinds", at = @At("HEAD"))
-    private void potionsbelt$interceptColumnSelection(CallbackInfo ci) {
+    private void potionsbelt$clearSuppression(CallbackInfo ci) {
         Minecraft client = (Minecraft) (Object) this;
         LocalPlayer player = client.player;
 
         // Clear the suppression as soon as the use key is released (or the belt
         // is no longer held), so the next press starts a fresh belt use.
-        if (suppressBeltDrinkUntilRelease
-                && (player == null || !client.options.keyUse.isDown() || !holdingBelt(player))) {
-            suppressBeltDrinkUntilRelease = false;
+        if (ClientBeltState.isDrinkSuppressed()
+                && (player == null || !client.options.keyUse.isDown() || !PotionsBeltItem.isHeldBy(player))) {
+            ClientBeltState.clearDrinkSuppression();
         }
+    }
 
-        if (player == null || !player.isUsingItem()
-                || !(player.getUseItem().getItem() instanceof PotionsBeltItem)) {
+    @Inject(method = "handleKeybinds", at = @At("HEAD"))
+    private void potionsbelt$interceptColumnSelection(CallbackInfo ci) {
+        Minecraft client = (Minecraft) (Object) this;
+        LocalPlayer player = client.player;
+        if (player == null || !BeltKeybinds.SELECT_MODIFIER.isDown() || !PotionsBeltItem.isHeldBy(player)) {
             return;
         }
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < client.options.keyHotbarSlots.length; i++) {
             if (client.options.keyHotbarSlots[i].consumeClick()) {
-                int column = i + 1;
-                // Empty column: the server will cancel the drink; also require a
-                // release + re-press before another belt drink can start, instead
-                // of the still-held click re-triggering one immediately.
-                if (BeltInventory.firstPotionSlotInColumn(player.getUseItem(), column) < 0) {
-                    suppressBeltDrinkUntilRelease = true;
-                }
-                ClientPlayNetworking.send(new SelectColumnPayload(column));
+                ClientBeltState.onColumnPicked(player, i + 1);
             }
+        }
+    }
+
+    @Inject(method = "handleKeybinds", at = @At("HEAD"))
+    private void potionsbelt$interceptInventoryKey(CallbackInfo ci) {
+        Minecraft client = (Minecraft) (Object) this;
+        LocalPlayer player = client.player;
+        if (player == null || !(player.getMainHandItem().getItem() instanceof PotionsBeltItem)) {
+            return;
+        }
+        if (client.options.keyInventory.consumeClick()) {
+            ClientPlayNetworking.send(new OpenBeltMenuPayload());
         }
     }
 
     @Inject(method = "startUseItem", at = @At("HEAD"), cancellable = true)
     private void potionsbelt$blockDrinkUntilRelease(CallbackInfo ci) {
-        if (!suppressBeltDrinkUntilRelease) {
+        if (!ClientBeltState.isDrinkSuppressed()) {
             return;
         }
         LocalPlayer player = ((Minecraft) (Object) this).player;
-        if (player != null && holdingBelt(player)) {
+        if (player != null && PotionsBeltItem.isHeldBy(player)) {
             ci.cancel();
         }
-    }
-
-    private static boolean holdingBelt(LocalPlayer player) {
-        return player.getMainHandItem().getItem() instanceof PotionsBeltItem
-                || player.getOffhandItem().getItem() instanceof PotionsBeltItem;
     }
 }

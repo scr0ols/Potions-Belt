@@ -66,6 +66,13 @@ public final class BeltInventory {
         return firstPotionSlot(belt) >= 0;
     }
 
+    /** Read-only lookup of the item at a given slot (0..SIZE-1), for HUD preview. */
+    public static ItemStack getItem(ItemStack belt, int slot) {
+        NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+        belt.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
+        return items.get(slot);
+    }
+
     /**
      * Row-major index of the first drinkable potion in the given 1-9 column,
      * checking row 1 -> row 2 -> row 3 (bottles are skipped, matching

@@ -22,21 +22,14 @@ public class PotionsBeltItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        // Right click always just drinks now; opening the menu and picking a
+        // column both live on their own dedicated keybinds (BeltKeybinds),
+        // decoupled from right click entirely.
         ItemStack belt = player.getItemInHand(hand);
-        if (player.isShiftKeyDown()) {
-            if (!level.isClientSide()) {
-                player.openMenu(new SimpleMenuProvider(
-                        (containerId, playerInventory, p) ->
-                                new PotionsBeltMenu(containerId, playerInventory,
-                                        BeltInventory.load(belt), belt),
-                        belt.getHoverName()));
-            }
-            return InteractionResult.SUCCESS;
-        }
-        // Plain right click: drink the first available potion. The belt's
-        // CONSUMABLE component (DEFAULT_DRINK) provides the vanilla 1.6 s drink
-        // animation and sounds; the potion is only consumed at finishUsingItem.
         if (BeltInventory.hasPotion(belt)) {
+            // The belt's CONSUMABLE component (DEFAULT_DRINK) provides the
+            // vanilla 1.6 s drink animation and sounds; the potion is only
+            // consumed at finishUsingItem.
             player.startUsingItem(hand);
             return InteractionResult.CONSUME;
         }
@@ -52,12 +45,39 @@ public class PotionsBeltItem extends Item {
         return InteractionResult.FAIL;
     }
 
+    /** True if the player is holding a belt in either hand. */
+    public static boolean isHeldBy(Player player) {
+        return player.getMainHandItem().getItem() instanceof PotionsBeltItem
+                || player.getOffhandItem().getItem() instanceof PotionsBeltItem;
+    }
+
+    /**
+     * Called server-side when the "Open Belt Menu" keybind is pressed. Mirrors
+     * the menu-opening logic use() used to run on sneak+right-click, now fully
+     * independent of right click. Main hand takes priority if both hands
+     * somehow hold a belt.
+     */
+    public static void openMenu(Player player) {
+        ItemStack belt = player.getMainHandItem().getItem() instanceof PotionsBeltItem
+                ? player.getMainHandItem()
+                : player.getOffhandItem();
+        if (!(belt.getItem() instanceof PotionsBeltItem)) {
+            return;
+        }
+        player.openMenu(new SimpleMenuProvider(
+                (containerId, playerInventory, p) ->
+                        new PotionsBeltMenu(containerId, playerInventory, BeltInventory.load(belt), belt),
+                belt.getHoverName()));
+    }
+
     /**
      * Called server-side when a SelectColumnPayload arrives. Records the
-     * pending column, then, if the player is currently drinking from the
-     * belt and that column is already known to be empty, cuts the drink
-     * animation short right away instead of making the player wait for the
-     * full 1.6 s just to see the same "nothing to drink" feedback at the end.
+     * player's new default column (sticky: it stays selected for future
+     * drinks too, not just the one in progress), then, if the player is
+     * currently drinking from the belt and that column is already known to
+     * be empty, cuts the drink animation short right away instead of making
+     * the player wait for the full 1.6 s just to see the same "nothing to
+     * drink" feedback at the end.
      */
     public static void onColumnSelected(Player player, int column) {
         BeltSelections.set(player, column);
@@ -85,10 +105,15 @@ public class PotionsBeltItem extends Item {
         // Never call super: the default would consume the belt itself.
         if (!level.isClientSide()) {
             Player player = entity instanceof Player p ? p : null;
-            int pendingColumn = player != null ? BeltSelections.get(player) : -1;
-            int slot = pendingColumn > 0
-                    ? BeltInventory.firstPotionSlotInColumn(belt, pendingColumn)
-                    : BeltInventory.firstPotionSlot(belt);
+            // Try the player's default column first; if it's empty (or there
+            // is no player), fall back to the first potion anywhere in the
+            // belt instead of failing outright.
+            int slot = player != null
+                    ? BeltInventory.firstPotionSlotInColumn(belt, BeltSelections.get(player))
+                    : -1;
+            if (slot < 0) {
+                slot = BeltInventory.firstPotionSlot(belt);
+            }
 
             if (slot >= 0) {
                 boolean keepPotion = player != null && player.hasInfiniteMaterials();
@@ -99,30 +124,10 @@ public class PotionsBeltItem extends Item {
                     // effects, stats, advancement trigger, finish sounds.
                     consumable.onConsume(level, entity, potion);
                 }
-            } else if (pendingColumn > 0 && player != null) {
-                // Column selected but empty (or bottles only) in all 3 rows:
-                // abort with the same feedback as an empty belt. Normally
-                // caught earlier by onColumnSelected (which cuts the
-                // animation short as soon as the column proves empty); this
-                // is the fallback for the rare case where it became empty
-                // between selection and finish.
+            } else if (player != null) {
                 announceNoPotions(player, level);
-            }
-
-            if (player != null) {
-                BeltSelections.clear(player);
             }
         }
         return belt;
-    }
-
-    @Override
-    public boolean releaseUsing(ItemStack belt, Level level, LivingEntity entity, int timeCharged) {
-        // Drink released early or interrupted (hotbar switch, drop, etc.):
-        // clear the pending column so a later drink doesn't reuse it.
-        if (!level.isClientSide() && entity instanceof Player player) {
-            BeltSelections.clear(player);
-        }
-        return false;
     }
 }
