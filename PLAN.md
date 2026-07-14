@@ -195,10 +195,16 @@ Maps onto the vanilla item-use system — no timers of our own:
    replacement.~~ (done 2026-07-13)
 5. ~~Column selection: key interception, payload, fallback logic.~~
    (done 2026-07-13)
-6. Polish: sounds, column-selection feedback (no indicator today — pressing a
-   number key gives no HUD/action-bar sign of what got picked, found during
-   milestone 5 playtesting), tooltip (contents preview), edge-case testing
-   pass.
+6. Polish. In progress:
+   - ~~Column-selection feedback, part 1: drink animation cancels
+     immediately (not after the full 1.6s) when the selected column is
+     empty.~~ (done 2026-07-14)
+   - Column-selection feedback, part 2 (design settled 2026-07-14, see
+     NOTES.md): selected column becomes a persistent per-player default
+     (not just for the current drink) with fallback to first-available when
+     the default is empty, plus a HUD icon previewing the potion about to
+     be drunk whenever the belt is held.
+   - Still open: sounds, tooltip (contents preview), edge-case testing pass.
 7. Docs pass: review and update README.md (current build/run steps, feature
    list, screenshots/icon if relevant) against actual end-state behavior, and
    set up a wiki for the mod (usage guide, column-loadout explanation,

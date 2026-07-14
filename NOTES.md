@@ -91,7 +91,10 @@ mutual-exclusivity documented in PLAN.md's GUI section (sneak reserved for
 the menu, plain right click reserved for drinking).
 
 Milestone 5 done. Next session: milestone 6, polish (sounds, column-selection
-feedback per above, tooltip contents preview, edge-case pass).
+feedback per above, tooltip contents preview, edge-case pass). See the
+2026-07-14 design-decision entry below for column-selection feedback: the
+plan is now settled (sticky default column + HUD preview), not just a known
+gap.
 
 **Follow-up fix (2026-07-14): drink animation no longer plays out fully on a
 column that's already empty.** Found by João testing a fully-drunk column
@@ -157,6 +160,34 @@ ProtonVPN churning the network stack. NOT caused by IPv6 and NOT fixed by
 worker thread (its 401 is harmless and the game proceeds past it), so it
 cannot block startup here. That earlier IPv4 experiment in `build.gradle` was
 reverted.
+
+**Design decision (2026-07-14): sticky default column + HUD preview, for the
+column-selection feedback gap in milestone 6.** Discussed with João before
+implementing (not yet built). Two parts:
+
+1. Column selection becomes persistent instead of per-drink. The column
+   picked via right click + number key becomes the player's default for
+   future drinks too, not just the one in progress — updated even if that
+   column turns out empty. Default starts at column 1. Plain right click (no
+   hotkey) tries the default column first; if empty, falls back to the
+   existing "first available potion anywhere" behavior instead of failing —
+   this was the key open question (rejected the stricter alternative where
+   an empty default would fully block plain right click). Default is
+   per-player, not per-belt-item (two belts in inventory share one default —
+   accepted as a known v1 limitation), and now only clears on disconnect
+   instead of after every drink.
+2. A HUD icon previews the potion about to be drunk, visible whenever the
+   belt is held in either hand (not just mid-animation). It must mirror the
+   real drink logic exactly (default column's potion, else first-available
+   fallback, else empty indicator) using the same
+   `BeltInventory.firstPotionSlotInColumn` / `firstPotionSlot` calls the
+   drink itself uses, so preview and actual behavior can't drift apart.
+   Client-side only, no new S2C payload needed — the client already knows
+   its own selection the instant it sends `SelectColumnPayload`, so it can
+   mirror the default column locally instead of waiting on the server.
+
+Implementation (persistent-selection semantics, HUD rendering, exact
+placement) is next session's work.
 
 ## Session 4 (2026-07-13): milestone 4 — drinking
 
