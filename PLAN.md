@@ -193,6 +193,9 @@ Maps onto the vanilla item-use system — no timers of our own:
    (done 2026-07-13)
 4. ~~Drinking: held right click, first-available logic, in-place bottle
    replacement.~~ (done 2026-07-13)
-5. Column selection: key interception, payload, fallback logic.
-6. Polish: sounds, action bar feedback, tooltip (contents preview), edge-case
-   testing pass.
+5. ~~Column selection: key interception, payload, fallback logic.~~
+   (done 2026-07-13)
+6. Polish: sounds, column-selection feedback (no indicator today — pressing a
+   number key gives no HUD/action-bar sign of what got picked, found during
+   milestone 5 playtesting), tooltip (contents preview), edge-case testing
+   pass.
