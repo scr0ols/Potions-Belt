@@ -93,6 +93,71 @@ the menu, plain right click reserved for drinking).
 Milestone 5 done. Next session: milestone 6, polish (sounds, column-selection
 feedback per above, tooltip contents preview, edge-case pass).
 
+**Follow-up fix (2026-07-14): drink animation no longer plays out fully on a
+column that's already empty.** Found by João testing a fully-drunk column
+(all 3 rows turned to bottles) — pressing right click + that column's number
+still played the full 1.6 s vanilla drink animation before the "No potions in
+the belt" message appeared; nothing was actually consumed (correct), but the
+wait was pure friction, and the empty-belt case (no animation at all) had set
+the expectation that failure should be immediate. Root cause: `use()` only
+gates on `BeltInventory.hasPotion(belt)` (any potion anywhere), since the
+column itself isn't known yet at that point — the number key arrives as a
+payload only after `startUsingItem` already began. Column validity could
+previously only be checked at `finishUsingItem`, i.e. after the full
+animation.
+
+Fix: `PotionsBeltItem.onColumnSelected(player, column)` (called from the
+`SelectColumnPayload` server receiver in `PotionsBelt.java`, replacing a
+direct `BeltSelections.set` call) now checks the column immediately upon
+selection — if the player is mid-drink on the belt and the selected column
+is already empty, it shows the same feedback (action bar message + sound,
+extracted into a shared `announceNoPotions` helper used by `use()`,
+`finishUsingItem`'s abort branch, and this new path) and calls
+`player.stopUsingItem()` right away. `stopUsingItem()` syncs the "using item"
+entity flag to the client immediately, cutting the vanilla animation short —
+confirmed this is the same mechanism already relied on for the "switch
+hotbar slot mid-drink" case (session 5, checklist item 7), so no new client
+code was needed. `finishUsingItem`'s own abort branch stays as a fallback for
+the (currently unreachable in practice, but cheap to keep) case where the
+column becomes empty between selection and the animation's natural end.
+Build and all 11 existing unit tests still pass unchanged (the fix only
+changes *when* the abort feedback fires, not the fallback logic itself, so
+no new unit test was needed — this is server networking + entity-state
+behavior, verified in-game only). Verified in-game by João: animation now
+cancels immediately on an empty-column pick.
+
+That first pass had a follow-on bug: with right click held (the normal way
+to drink), cancelling the animation didn't stop the click itself, so on the
+very next tick `use()` saw `hasPotion(belt)` true (other columns still had
+potions) and started a brand new drink — the animation cancelled and
+immediately restarted, visible as a flicker. Fix, entirely client-side in
+`KeybindsMixin`: picking an empty column now also sets a
+`suppressBeltDrinkUntilRelease` flag; a new injection at the head of
+`Minecraft.startUseItem()` cancels belt use-starts while that flag is set,
+and it's cleared the moment the use key is released (or the belt is no
+longer held). Net effect: an empty-column pick ends that belt use for real —
+right click must be released and pressed again to start another one. Columns
+that do have a potion, and plain right click with no column selected, are
+unaffected. Confirmed working in-game by João (2026-07-14).
+
+**Environment note (2026-07-14): `runClient` startup hang was a wedged
+Windows WMI service, not IPv6.** Symptom: the client loads every mod fine,
+prints "287 Datafixer optimizations took … ms", then hangs forever — no
+window, no crash, no further log lines. Cause: Minecraft gathers system info
+at startup via OSHI (`oshi-core` 6.9.0 + JNA), which on Windows queries WMI;
+when the WMI subsystem is wedged, the first call (`getComputerSystem`) blocks
+the main thread indefinitely, right after Datafixer bootstrap and before the
+window is created. Reproduced in isolation with a standalone OSHI call against
+the same jar — hung >30 s at exactly that point. Fix: restart WMI from an
+elevated shell (`net stop winmgmt` then `net start winmgmt`), then relaunch;
+verify with `Get-CimInstance Win32_ComputerSystem` returning instantly.
+Intermittent (several runs today succeeded, several hung) and correlated with
+ProtonVPN churning the network stack. NOT caused by IPv6 and NOT fixed by
+`-Djava.net.preferIPv4Stack=true`: Mojang auth runs asynchronously on a later
+worker thread (its 401 is harmless and the game proceeds past it), so it
+cannot block startup here. That earlier IPv4 experiment in `build.gradle` was
+reverted.
+
 ## Session 4 (2026-07-13): milestone 4 — drinking
 
 **Summary: drinking is implemented and fully verified in-game — held right

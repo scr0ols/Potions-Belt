@@ -44,15 +44,40 @@ public class PotionsBeltItem extends Item {
             return InteractionResult.FAIL;
         }
         if (!level.isClientSide()) {
-            player.displayClientMessage(
-                    Component.translatable("potions-belt.belt.no_potions"), true);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.BUNDLE_INSERT_FAIL, SoundSource.PLAYERS, 0.5F, 1.0F);
+            announceNoPotions(player, level);
         }
         // Prevents the fail sound/message from spamming every ~4 ticks while
         // right click is held down (same pattern as vanilla ender pearl).
         player.getCooldowns().addCooldown(belt, 20);
         return InteractionResult.FAIL;
+    }
+
+    /**
+     * Called server-side when a SelectColumnPayload arrives. Records the
+     * pending column, then, if the player is currently drinking from the
+     * belt and that column is already known to be empty, cuts the drink
+     * animation short right away instead of making the player wait for the
+     * full 1.6 s just to see the same "nothing to drink" feedback at the end.
+     */
+    public static void onColumnSelected(Player player, int column) {
+        BeltSelections.set(player, column);
+        if (!player.isUsingItem()) {
+            return;
+        }
+        ItemStack belt = player.getUseItem();
+        if (!(belt.getItem() instanceof PotionsBeltItem)
+                || BeltInventory.firstPotionSlotInColumn(belt, column) >= 0) {
+            return;
+        }
+        announceNoPotions(player, player.level());
+        player.stopUsingItem();
+    }
+
+    private static void announceNoPotions(Player player, Level level) {
+        player.displayClientMessage(
+                Component.translatable("potions-belt.belt.no_potions"), true);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BUNDLE_INSERT_FAIL, SoundSource.PLAYERS, 0.5F, 1.0F);
     }
 
     @Override
@@ -76,12 +101,12 @@ public class PotionsBeltItem extends Item {
                 }
             } else if (pendingColumn > 0 && player != null) {
                 // Column selected but empty (or bottles only) in all 3 rows:
-                // abort with the same feedback as an empty belt, same as
-                // if the column key had never been pressed.
-                player.displayClientMessage(
-                        Component.translatable("potions-belt.belt.no_potions"), true);
-                level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.BUNDLE_INSERT_FAIL, SoundSource.PLAYERS, 0.5F, 1.0F);
+                // abort with the same feedback as an empty belt. Normally
+                // caught earlier by onColumnSelected (which cuts the
+                // animation short as soon as the column proves empty); this
+                // is the fallback for the rare case where it became empty
+                // between selection and finish.
+                announceNoPotions(player, level);
             }
 
             if (player != null) {
