@@ -199,3 +199,7 @@ Maps onto the vanilla item-use system — no timers of our own:
    number key gives no HUD/action-bar sign of what got picked, found during
    milestone 5 playtesting), tooltip (contents preview), edge-case testing
    pass.
+7. Docs pass: review and update README.md (current build/run steps, feature
+   list, screenshots/icon if relevant) against actual end-state behavior, and
+   set up a wiki for the mod (usage guide, column-loadout explanation,
+   FAQ/troubleshooting).
