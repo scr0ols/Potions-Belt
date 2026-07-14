@@ -1,5 +1,98 @@
 # Potion's Belt — Session notes
 
+## Session 5 (2026-07-13): milestone 5 — column selection
+
+**Summary: number-key column selection implemented as planned (client mixin
+intercepting hotbar keys 1-9 while drinking, C2S payload, server-side
+per-player pending column, row 1 -> 2 -> 3 fallback in finishUsingItem).
+Build and all 11 unit tests pass. In-game verification pending — João to
+test against the checklist below.**
+
+What was added:
+- `SelectColumnPayload` (record, C2S): single `int column` field, registered
+  via `PayloadTypeRegistry.playC2S()` in `PotionsBelt.onInitialize()` (runs
+  on both sides since the main entrypoint is common code).
+- `BeltSelections`: static per-player pending column, keyed by player UUID in
+  a plain `HashMap` — Fabric's networking API dispatches payload receivers on
+  the server thread, so no concurrency is needed. Cleared in three places:
+  `finishUsingItem` (after resolving, success or abort), `releaseUsing`
+  (early release or vanilla-interrupted use — hotbar switch, dropping the
+  item, etc., all route through this one vanilla hook), and
+  `ServerPlayConnectionEvents.DISCONNECT`.
+- `BeltInventory.firstPotionSlotInColumn(belt, column)`: row-major index of
+  the first drinkable potion in the given 1-9 column, checking row 1 -> row 2
+  -> row 3 (bottles skipped, same rule as `firstPotionSlot`). Returns -1 for
+  an out-of-range column (defensive: the column number arrives over the
+  network, a boundary worth validating even though our own client only ever
+  sends 1-9) or when the column has no potion in any row.
+- `PotionsBeltItem.finishUsingItem`: if a column is pending
+  (`BeltSelections.get`), resolves via `firstPotionSlotInColumn`; otherwise
+  unchanged first-available scan from milestone 4. If the column resolves to
+  nothing, aborts with the same action-bar message + `BUNDLE_INSERT_FAIL`
+  sound used for the empty-belt case, consuming nothing (removal only ever
+  happens through `takePotionAt`, which is never reached in the abort path).
+- `KeybindsMixin` (client, `Minecraft` mixin): injects at the `HEAD` of
+  `handleKeybinds()`. If the player `isUsingItem()` and the item is a
+  `PotionsBeltItem` (checked via `getUseItem()` — hand-agnostic, covers main
+  hand and offhand), drains any pressed hotbar key's `consumeClick()` and
+  sends `SelectColumnPayload` for it. Draining the click here means vanilla's
+  own hotbar-switch loop later in the same method call sees `clickCount` at
+  0 and does nothing — no cancellation of the whole method, so every other
+  keybind handled by `handleKeybinds` (attack, drop, swap hands, etc.) is
+  unaffected. New client mixin config `potions-belt.client.mixins.json`,
+  registered in `fabric.mod.json`'s `mixins` array (client-only environment)
+  — this is the first mixin since the session-2 template cleanup removed the
+  example ones.
+- 5 new JUnit cases on `firstPotionSlotInColumn` (row 1 direct pick, row 2
+  fallback, row 3 fallback, all-empty column, out-of-range column), same
+  pattern as `BeltInventoryTest` from session 4. 11/11 tests pass.
+
+Design/API notes (verified via `javap` against the mapped 1.21.11 jars and
+the fabric-api jar before writing code, same practice as sessions 3-4):
+- `Options.keyHotbarSlots` and `Minecraft.player`/`options` are public
+  fields — no accessor mixin needed, direct field reads from the injected
+  method.
+- `LivingEntity.getUseItem()` / `isUsingItem()` / `getUsedItemHand()` live on
+  the common `LivingEntity` class, so they work identically client- and
+  server-side; `getUseItem()` already reflects whichever hand triggered the
+  use, so no explicit hand check was needed to satisfy the "main hand or
+  offhand" requirement.
+- `Item.releaseUsing(stack, level, entity, timeCharged)` is vanilla's single
+  hook for every early-stop path (manual release, hotbar switch, item
+  dropped) — confirmed there's no separate mixin needed for the "switch
+  slot mid-drink" edge case, vanilla's own `stopUsingItem()` routes through
+  it.
+- Fabric API C2S payload types are registered via
+  `PayloadTypeRegistry.playC2S()`; `CustomPacketPayload.Type` is constructed
+  directly with our own `Identifier` (its `createType(String)` helper
+  defaults to the `minecraft` namespace, not useful here).
+- `ServerPlayConnectionEvents.DISCONNECT` gives `(ServerGamePacketListenerImpl
+  handler, MinecraftServer server)`; `handler.getPlayer()` is the clean
+  accessor for the cleanup.
+
+In-game verification (João, all 8 checklist cases): all OK, including the
+subtle ones — releasing right click after selecting a column consumes
+nothing and clears the selection (case 6), and switching hotbar slot mid-drink
+stops the vanilla use entirely so the pending column can't leak into a later
+drink (case 7). Key interception via the mixin worked reliably; the
+sneak+scroll fallback from PLAN.md was not needed.
+
+One UX gap found during testing, deferred to milestone 6: pressing a number
+key gives no feedback at all — no HUD indicator, no action-bar message
+naming the selected potion/column. Functionally correct (the right slot gets
+consumed) but not discoverable from the player's perspective. Milestone 6's
+"action bar feedback" item should specifically cover this: some sort of
+message/indicator on column selection, not just on the abort/empty cases
+already handled.
+
+Confirmed by playtesting as intentional, not a bug: sneak + right click
+opens the GUI and can't drink at the same time — this is exactly the
+mutual-exclusivity documented in PLAN.md's GUI section (sneak reserved for
+the menu, plain right click reserved for drinking).
+
+Milestone 5 done. Next session: milestone 6, polish (sounds, column-selection
+feedback per above, tooltip contents preview, edge-case pass).
+
 ## Session 4 (2026-07-13): milestone 4 — drinking
 
 **Summary: drinking is implemented and fully verified in-game — held right
