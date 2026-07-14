@@ -5,7 +5,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -13,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 public class PotionsBeltMenu extends AbstractContainerMenu {
 
     private static final int BELT_SLOTS = BeltInventory.SIZE;
-    private static final int OFFHAND_SWAP_BUTTON = 40;
 
     private final Container container;
     private final ItemStack beltStack;
@@ -39,27 +37,12 @@ public class PotionsBeltMenu extends AbstractContainerMenu {
         }
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new PlayerSlot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlot(new PlayerSlot(playerInventory, col, 8 + col * 18, 142));
+            addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
         }
-    }
-
-    @Override
-    public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        // Number-key/offhand swaps read the player inventory directly, bypassing
-        // slot checks — block them when they would move a belt.
-        if (clickType == ClickType.SWAP) {
-            ItemStack swapped = button == OFFHAND_SWAP_BUTTON
-                    ? player.getOffhandItem()
-                    : player.getInventory().getItem(button);
-            if (swapped.getItem() instanceof PotionsBeltItem) {
-                return;
-            }
-        }
-        super.clicked(slotId, button, clickType, player);
     }
 
     @Override
@@ -107,18 +90,6 @@ public class PotionsBeltMenu extends AbstractContainerMenu {
         @Override
         public boolean mayPlace(ItemStack stack) {
             return BeltInventory.isAcceptable(stack);
-        }
-    }
-
-    /** Player inventory slot: a belt can't be picked up while a belt menu is open. */
-    private static class PlayerSlot extends Slot {
-        PlayerSlot(Inventory inventory, int slot, int x, int y) {
-            super(inventory, slot, x, y);
-        }
-
-        @Override
-        public boolean mayPickup(Player player) {
-            return !(getItem().getItem() instanceof PotionsBeltItem);
         }
     }
 }
