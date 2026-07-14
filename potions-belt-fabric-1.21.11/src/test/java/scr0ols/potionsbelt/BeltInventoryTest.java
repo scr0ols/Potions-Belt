@@ -138,4 +138,62 @@ class BeltInventoryTest {
         assertTrue(BeltInventory.hasPotion(belt(Map.of(26, potion(Potions.HEALING)))));
         assertFalse(BeltInventory.hasPotion(belt(Map.of(0, bottle()))));
     }
+
+    @Test
+    void columnWithPotionInRow1PicksItDirectly() {
+        // column 3 (index 2): row1 = potion, row2/row3 = other potions
+        ItemStack belt = belt(Map.of(
+                2, potion(Potions.HEALING),
+                11, potion(Potions.SWIFTNESS),
+                20, potion(Potions.LEAPING)));
+
+        int slot = BeltInventory.firstPotionSlotInColumn(belt, 3);
+
+        assertEquals(2, slot);
+        assertEquals(Potions.HEALING, potionType(contents(belt).get(slot)));
+    }
+
+    @Test
+    void columnFallsBackToRow2WhenRow1EmptyOrBottle() {
+        // column 5 (index 4): row1 = bottle, row2 = potion
+        ItemStack belt = belt(Map.of(
+                4, bottle(),
+                13, potion(Potions.SWIFTNESS)));
+
+        int slot = BeltInventory.firstPotionSlotInColumn(belt, 5);
+
+        assertEquals(13, slot);
+        assertEquals(Potions.SWIFTNESS, potionType(contents(belt).get(slot)));
+    }
+
+    @Test
+    void columnFallsBackToRow3WhenRow1AndRow2EmptyOrBottle() {
+        // column 9 (index 8): row1 empty, row2 = bottle, row3 = potion
+        ItemStack belt = belt(Map.of(
+                17, bottle(),
+                26, potion(Potions.LEAPING)));
+
+        int slot = BeltInventory.firstPotionSlotInColumn(belt, 9);
+
+        assertEquals(26, slot);
+        assertEquals(Potions.LEAPING, potionType(contents(belt).get(slot)));
+    }
+
+    @Test
+    void columnEmptyInAllRowsReturnsNoSlot() {
+        // column 1 (index 0): only a bottle across all 3 rows, potions live elsewhere
+        ItemStack belt = belt(Map.of(
+                0, bottle(),
+                1, potion(Potions.HEALING)));
+
+        assertEquals(-1, BeltInventory.firstPotionSlotInColumn(belt, 1));
+    }
+
+    @Test
+    void columnOutOfRangeReturnsNoSlot() {
+        ItemStack belt = belt(Map.of(0, potion(Potions.HEALING)));
+
+        assertEquals(-1, BeltInventory.firstPotionSlotInColumn(belt, 0));
+        assertEquals(-1, BeltInventory.firstPotionSlotInColumn(belt, 10));
+    }
 }
