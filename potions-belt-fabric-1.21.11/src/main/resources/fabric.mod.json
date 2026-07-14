@@ -21,6 +21,12 @@
 			"scr0ols.potionsbelt.PotionsBeltClient"
 		]
 	},
+	"mixins": [
+		{
+			"config": "potions-belt.client.mixins.json",
+			"environment": "client"
+		}
+	],
 	"depends": {
 		"fabricloader": ">=0.18.4",
 		"minecraft": "~1.21.11",

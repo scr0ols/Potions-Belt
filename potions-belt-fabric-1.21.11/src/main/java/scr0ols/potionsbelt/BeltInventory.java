@@ -12,6 +12,8 @@ import net.minecraft.world.item.component.ItemContainerContents;
 public final class BeltInventory {
 
     public static final int SIZE = 27;
+    public static final int COLUMNS = 9;
+    public static final int ROWS = 3;
 
     private BeltInventory() {
     }
@@ -62,6 +64,28 @@ public final class BeltInventory {
     /** True if the belt holds at least one drinkable potion (bottles don't count). */
     public static boolean hasPotion(ItemStack belt) {
         return firstPotionSlot(belt) >= 0;
+    }
+
+    /**
+     * Row-major index of the first drinkable potion in the given 1-9 column,
+     * checking row 1 -> row 2 -> row 3 (bottles are skipped, matching
+     * firstPotionSlot). Returns -1 if the column is out of range or holds no
+     * drinkable potion in any row.
+     */
+    public static int firstPotionSlotInColumn(ItemStack belt, int column) {
+        if (column < 1 || column > COLUMNS) {
+            return -1;
+        }
+        NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+        belt.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
+        int col = column - 1;
+        for (int row = 0; row < ROWS; row++) {
+            int index = row * COLUMNS + col;
+            if (isDrinkablePotion(items.get(index))) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     /**

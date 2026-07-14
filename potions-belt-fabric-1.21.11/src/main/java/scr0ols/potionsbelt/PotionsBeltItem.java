@@ -59,9 +59,14 @@ public class PotionsBeltItem extends Item {
     public ItemStack finishUsingItem(ItemStack belt, Level level, LivingEntity entity) {
         // Never call super: the default would consume the belt itself.
         if (!level.isClientSide()) {
-            int slot = BeltInventory.firstPotionSlot(belt);
+            Player player = entity instanceof Player p ? p : null;
+            int pendingColumn = player != null ? BeltSelections.get(player) : -1;
+            int slot = pendingColumn > 0
+                    ? BeltInventory.firstPotionSlotInColumn(belt, pendingColumn)
+                    : BeltInventory.firstPotionSlot(belt);
+
             if (slot >= 0) {
-                boolean keepPotion = entity instanceof Player player && player.hasInfiniteMaterials();
+                boolean keepPotion = player != null && player.hasInfiniteMaterials();
                 ItemStack potion = BeltInventory.takePotionAt(belt, slot, keepPotion);
                 Consumable consumable = potion.get(DataComponents.CONSUMABLE);
                 if (consumable != null) {
@@ -69,8 +74,30 @@ public class PotionsBeltItem extends Item {
                     // effects, stats, advancement trigger, finish sounds.
                     consumable.onConsume(level, entity, potion);
                 }
+            } else if (pendingColumn > 0 && player != null) {
+                // Column selected but empty (or bottles only) in all 3 rows:
+                // abort with the same feedback as an empty belt, same as
+                // if the column key had never been pressed.
+                player.displayClientMessage(
+                        Component.translatable("potions-belt.belt.no_potions"), true);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.BUNDLE_INSERT_FAIL, SoundSource.PLAYERS, 0.5F, 1.0F);
+            }
+
+            if (player != null) {
+                BeltSelections.clear(player);
             }
         }
         return belt;
+    }
+
+    @Override
+    public boolean releaseUsing(ItemStack belt, Level level, LivingEntity entity, int timeCharged) {
+        // Drink released early or interrupted (hotbar switch, drop, etc.):
+        // clear the pending column so a later drink doesn't reuse it.
+        if (!level.isClientSide() && entity instanceof Player player) {
+            BeltSelections.clear(player);
+        }
+        return false;
     }
 }

@@ -1,6 +1,9 @@
 package scr0ols.potionsbelt;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,6 +26,12 @@ public class PotionsBelt implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModItems.initialize();
+
+		PayloadTypeRegistry.playC2S().register(SelectColumnPayload.TYPE, SelectColumnPayload.STREAM_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(SelectColumnPayload.TYPE,
+				(payload, context) -> BeltSelections.set(context.player(), payload.column()));
+		ServerPlayConnectionEvents.DISCONNECT.register(
+				(handler, server) -> BeltSelections.clear(handler.getPlayer()));
 
 		LOGGER.info("Potion's Belt initialized");
 	}
