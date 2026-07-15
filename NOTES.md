@@ -1,5 +1,62 @@
 # Potion's Belt — Session notes
 
+## Session 8 (2026-07-15): milestone 8 design discussion + repo cleanup
+
+**Summary: no code changes. Cleaned up two stray leftover files, then had a
+full design discussion for milestone 8 (configurable settings) and captured
+it in a new working doc, `MILESTONE8-SETTINGS.md`. Implementation
+deliberately deferred to a future session — João wanted to think through the
+design first rather than build against a half-settled plan.**
+
+Cleanup: two accidental test textures (`ASDASD.png`, `asd3232.png`) had
+ended up directly in the mod's item textures folder (untracked, not part of
+any commit). Moved to `Logo/archived/` and added `Logo/archived/` to
+`.gitignore` so archived source material doesn't get tracked. `Logo/` and
+`Sounds/` themselves (source PNG/SVG/wav material) remain untracked but not
+gitignored — out of scope for this cleanup, left as-is.
+
+Milestone 8 design, all settled via discussion with João and written up in
+`MILESTONE8-SETTINGS.md` (not yet folded into PLAN.md — that only happens
+once implementation actually starts, per this project's doc convention):
+- **Settings UI mechanism**: two access points — ModMenu integration (new
+  dependency) plus a dedicated remappable keybind matching the existing
+  `BeltKeybinds` pattern, both opening the same settings screen. Persistence
+  via Gson JSON (already on the classpath).
+- **Invert scroll-cycle direction**: simplest of the three, one boolean read
+  where `MouseScrollMixin` currently hardcodes the direction ternary. No
+  open questions.
+- **"No pre-selector required" mode**: settled as a full replacement of
+  `SELECT_MODIFIER` gating when enabled (not additive), covering both
+  hotbar keys and scroll — effectively an opt-in revival of the original
+  milestone 5/6 always-on design (the one that collided with vanilla's own
+  hotbar keybindings, see session 7's "Playtest round 2" notes), now safely
+  gated behind a setting instead of being the hardcoded default.
+- **Combined inventory + belt tab**: the most-refined-but-still-open of the
+  three. Settled: a real single `AbstractContainerMenu` combining vanilla's
+  full inventory screen (crafting, armor, recipes, player grid) with the
+  belt's 27 slots, not a recipe-book-style overlay swap; belt slots default
+  visible with a show/hide button; trigger condition is "belt anywhere in
+  inventory" (not just held), matching PLAN.md's original wording over an
+  earlier "belt in hand" phrasing raised mid-discussion; and once enabled,
+  this setting fully takes over both entry points (E and the dedicated
+  "Open Belt Menu" keybind both open the combined screen, the standalone
+  27-slot-only screen isn't used at all while the setting is on). Still
+  open: which screen-building approach to use technically (extend vanilla's
+  `InventoryScreen` vs. a parallel custom screen — needs a `javap`/sources
+  jar check before deciding, same practice as every prior session), which
+  belt's contents show if the player carries more than one (parallel to the
+  existing "default column is per-belt" limitation — likely same answer:
+  pick one deterministically, accept as a known limitation), exact
+  show/hide button placement and persistence, and exact screen dimensions
+  for the taller layout.
+
+Next session: implementation, starting with the config/persistence
+infrastructure and settings-screen scaffold (all three settings depend on
+it), then invert-scroll (simplest, no remaining open questions) end-to-end,
+then no-pre-selector mode, then the combined-tab setting last given it's
+the most involved and still has open technical questions to resolve while
+building.
+
 ## Session 7 (2026-07-14): milestone 6 — sounds
 
 **Summary: milestone 6 fully closed out — sounds and the edge-case pass both
