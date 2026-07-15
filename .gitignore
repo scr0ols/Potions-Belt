@@ -26,9 +26,13 @@ bin/
 
 # fabric / minecraft dev runs
 run/
+logs/
 
 # java
 hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+# archived/discarded source assets
+Logo/archived/

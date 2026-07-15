@@ -2,12 +2,14 @@ package scr0ols.potionsbelt;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.Consumables;
 
 public class ModItems {
 
@@ -15,7 +17,11 @@ public class ModItems {
             new PotionsBeltItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM,
                             Identifier.fromNamespaceAndPath(PotionsBelt.MOD_ID, "potions_belt")))
-                    .stacksTo(1)));
+                    .stacksTo(1)
+                    // Gives the belt the vanilla drink use (32 ticks, DRINK animation,
+                    // drink sounds). PotionsBeltItem overrides use/finishUsingItem, so
+                    // the belt itself is never consumed.
+                    .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)));
 
     private static Item registerItem(String name, Item item) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,

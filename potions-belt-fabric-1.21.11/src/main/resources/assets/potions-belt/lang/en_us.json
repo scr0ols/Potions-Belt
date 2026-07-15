@@ -1,3 +1,10 @@
 {
-  "item.potions-belt.potions_belt": "Potions Belt"
+  "item.potions-belt.potions_belt": "Potions Belt",
+  "potions-belt.belt.no_potions": "No potions in the belt",
+  "subtitles.potions-belt.belt_open": "Belt opens",
+  "subtitles.potions-belt.bottle_open": "Bottle opens",
+  "subtitles.potions-belt.bottle_close": "Bottle closes",
+  "key.category.potions-belt.main": "Potions Belt",
+  "key.potions-belt.open_menu": "Open Belt Menu",
+  "key.potions-belt.select_modifier": "Column Select Modifier (hold + 1-9)"
 }
