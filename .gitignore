@@ -34,5 +34,6 @@ replay_*.log
 *.hprof
 *.jfr
 
-# archived/discarded source assets
-Logo/archived/
+# source design/audio assets (working files, not tracked)
+Logo/
+Sounds/
