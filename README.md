@@ -2,7 +2,7 @@
 
 # Potion's Belt
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11-62B47A)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.1%2B-62B47A)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-0.18.4%2B-C8A87A)](https://fabricmc.net/)
 [![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
@@ -40,7 +40,7 @@ and the reasoning behind every design decision: [NOTES.md](NOTES.md).
 
 | | |
 |---|---|
-| Minecraft | 1.21.11 |
+| Minecraft | 26.1+ |
 | Fabric Loader | 0.18.4+ |
 | Fabric API | 0.141.3+1.21.11 |
 | Java | 21+ |
@@ -52,7 +52,7 @@ and the reasoning behind every design decision: [NOTES.md](NOTES.md).
 
 ## Installation
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11.
+1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.1 or later.
 2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for the same
    version and drop it in your `mods/` folder.
 3. Download Potion's Belt and drop it in `mods/` too.

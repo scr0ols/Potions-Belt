@@ -1,5 +1,24 @@
 # Potion's Belt — Session notes
 
+## Session 9 (2026-07-15): fabric.mod.json version requirement — 26.1+
+
+**Summary: fixed a Fabric Loader "Incompatible mods found" error João hit
+testing via the Modrinth App — `fabric.mod.json` still declared
+`"minecraft": "~1.21.11"`, but João's instance reports the game version as
+`26.2`. Widened the declared requirement to `">=26.1"` (open-ended, per
+João's call) and updated the matching version references in README.md
+(badge, requirements table, install step).**
+
+`potions-belt-fabric-1.21.11/gradle.properties` still pins
+`minecraft_version=1.21.11` for the actual Loom build/mappings — that wasn't
+touched, only the runtime compatibility predicate in `fabric.mod.json` and
+its README mentions. No code changes; not rebuilt or tested in-game against
+26.1/26.2 this session.
+
+Left open for a future session: if a future Minecraft release breaks
+compatibility despite the open-ended `>=26.1`, tighten the range (e.g.
+`>=26.1 <27`) at that point rather than pre-emptively bounding it now.
+
 ## Session 8 (2026-07-15): milestone 8 design discussion + repo cleanup
 
 **Summary: no code changes. Cleaned up two stray leftover files, then had a
