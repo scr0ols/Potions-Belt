@@ -10,7 +10,7 @@
 	"contact": {
 		"sources": "https://github.com/scr0ols/Potions-Belt"
 	},
-	"license": "MIT",
+	"license": "GPL-3.0-or-later",
 	"icon": "assets/potions-belt/icon.png",
 	"environment": "*",
 	"entrypoints": {

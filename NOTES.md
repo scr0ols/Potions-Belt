@@ -1,5 +1,25 @@
 # Potion's Belt — Session notes
 
+## Session 11 (2026-07-15): relicensed to GPL-3.0-or-later
+
+**Summary: João changed the root `LICENSE` from MIT to GPL-3.0 directly on
+GitHub (commit `a0fd500`, merged into `main` and `docs` via PR #10/#11).
+Propagated the change everywhere else the license was referenced: README
+badge/footer, `fabric.mod.json`'s `license` field, and the Gradle
+subproject's own `LICENSE` copy — previously a stale duplicate of the old
+MIT text, replaced with the same GPL-3.0 text as the root, matching the
+existing convention of keeping the two copies in sync (see session 2's
+notes on the original MIT copy).**
+
+- Used the SPDX identifier `GPL-3.0-or-later` in `fabric.mod.json`; the
+  README uses the shorthand `GPL-3.0+`. João asked for "gpl3.0+", i.e.
+  later GPL versions are allowed, not GPL-3.0-only.
+- Older NOTES.md/PLAN.md/MILESTONE7-DOCS.md entries describing the earlier
+  MIT decision were left as-is — they were accurate when written and are
+  part of the project history, not corrected retroactively.
+- Done on the `docs` branch, alongside the README/wiki formatting pass
+  (section dividers + NOTE/TIP/WARNING callouts, commit `b941e3c`).
+
 ## Session 10 (2026-07-15): git housekeeping — pushed 11 local commits to origin/dev
 
 **Summary: `dev` had 11 unpushed commits accumulated across sessions 8-9

@@ -5,7 +5,7 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11-62B47A)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-0.18.4%2B-C8A87A)](https://fabricmc.net/)
 [![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
-[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPL--3.0%2B-blue)](LICENSE)
 
 *A dedicated 3x9 potion container with fast, column-based drinking — no more digging through the hotbar.*
 
@@ -176,6 +176,6 @@ in-game verified; polish, docs, and configurability are ongoing.
 
 <div align="center">
 
-[MIT](LICENSE)
+[GPL-3.0+](LICENSE)
 
 </div>
