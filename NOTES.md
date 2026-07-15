@@ -1,5 +1,36 @@
 # Potion's Belt — Session notes
 
+## Session 10 (2026-07-15): git housekeeping — pushed 11 local commits to origin/dev
+
+**Summary: `dev` had 11 unpushed commits accumulated across sessions 8-9
+(milestone 8 settings design, community-health/wiki docs pass, pt_pt
+translation, CI workflow relocation, and the session-9 26.1/26.2
+investigation). Reviewed each for staleness before pushing — all were
+well-scoped and none needed squashing, including the `e376dfc`/`51af959`
+fix-then-revert pair, which is legitimate documented history (a real
+investigation, not noise) rather than churn. Pushed as-is:
+`ec98e4e..51af959 dev -> dev`.**
+
+`origin/dev` is now 37 commits ahead of `origin/main` (`origin/main` last
+moved with the `Create FUNDING.yml` commit). Functionally, milestones 1-7
+and 10 are complete (core belt mechanics, GUI, drinking, column selection,
+docs pass, pt_pt localization); milestone 8 (configurable settings) hasn't
+started and milestone 9 (skin applier) is still just an idea — neither
+blocks a v1 release. Whether this gap justifies a dev-to-main merge is
+João's call per project convention, not made here.
+
+Git hygiene items flagged, not fixed:
+- Two untracked root-level directories, `Logo/` (source PNG/SVG design
+  material) and `Sounds/` (source .wav recordings + presets), sit outside
+  git entirely — not gitignored, not tracked. This was already noted as
+  known/deferred debt in session 8's cleanup entry below; still unresolved.
+  Worth an explicit decision at some point: gitignore them (if they're
+  working files with a backup elsewhere) or track them (if they're the only
+  copy of source assets).
+- No other issues found: no stale branches beyond the expected `main`/`dev`
+  pair plus `origin/docs` (unrelated, pre-existing), no secrets or oddities
+  in history, local `main` is a normal 1 commit behind `origin/main`.
+
 ## Session 9 (2026-07-15): 26.1/26.2 investigated and reverted — real version mismatch, not a rename
 
 **Summary: João hit a Fabric Loader "Incompatible mods found" error testing
