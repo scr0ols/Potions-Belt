@@ -57,6 +57,92 @@ then no-pre-selector mode, then the combined-tab setting last given it's
 the most involved and still has open technical questions to resolve while
 building.
 
+**Follow-up (2026-07-15): milestone 7 (docs pass) fully implemented, plus a
+new milestone 10 (localization) scoped and started.** Same session, pivoted
+from milestone 8 planning to milestone 7 per João's request — he wanted
+Potion's Belt to match the repo-standards level of his other mod,
+`github.com/scr0ols/soundtweaks` (fetched its README/wiki structure for
+reference: badges, full community-health files, GitHub Discussions with
+templates, an extensive wiki — adapted, not copied). Design discussion
+captured in a new working doc, `MILESTONE7-DOCS.md` (same pattern as
+`MILESTONE8-SETTINGS.md`), then implemented in full within the same
+session rather than deferred.
+
+Found and fixed in passing: `potions-belt-fabric-1.21.11/.github/workflows/
+build.yml` was **dead config** — GitHub Actions only reads `.github/
+workflows/` from the true repo root (the `Potion's Belt/` folder), not a
+subdirectory, so this workflow had never actually run. It also targeted
+Java 25 (project uses 21) and assumed Gradle lived at the repo root. Fixed
+by moving it to the real `.github/workflows/build.yml`, correcting the Java
+version, and adding `working-directory: potions-belt-fabric-1.21.11` (plus
+fixing the artifact path) so `./gradlew build` actually resolves.
+
+Settled and built:
+- **`CODE_OF_CONDUCT.md`**: Contributor Covenant v2.1 (the standard
+  template, used verbatim per its own CC-BY-4.0 reuse terms), enforcement
+  contact `joaosilva98.work@gmail.com`.
+- **`SECURITY.md`**: same contact; notes the mod's actually-small attack
+  surface (client-side only, no server component of its own, no network
+  beyond the existing bounded C2S payloads already covered in PLAN.md).
+- **`CONTRIBUTING.md`**: build/test commands, the `dev`-branch-only
+  workflow, code style pointers (mirrors this file's own CLAUDE.md rules,
+  written out for outside contributors who won't have CLAUDE.md loaded),
+  conventional commits, and a PR checklist.
+- **`.github/ISSUE_TEMPLATE/`**: `bug_report.md`, `feature_request.md`, and
+  `new_translation.md` (the last one specifically for milestone 10's
+  claim-before-you-translate process). Plus `.github/
+  PULL_REQUEST_TEMPLATE.md`.
+- **`.github/DISCUSSION_TEMPLATE/`**: `q-a.yml`, `ideas.yml`,
+  `show-and-tell.yml` — the three categories agreed on. **Enabling
+  Discussions itself is a repo setting** (Settings > Features), not a file;
+  João still needs to flip that toggle on github.com himself.
+- **README.md overhaul**: shields.io badges (Minecraft, Fabric, Java,
+  License — core set only, styled after soundtweaks' but with this
+  project's own values; no Modrinth/CurseForge/CI/Ko-fi badges yet, nothing
+  to point them at), a rewritten feature list matching actual end-state
+  behavior (the old one still listed GUI/drinking/column-selection as
+  unchecked TODOs despite milestones 3-6 being done), requirements table,
+  installation steps, links to the new community-health files and the
+  wiki, and an accurate status checklist including milestones 7-10.
+- **Milestone 10 (localization), started**: `pt_pt.json` added (European
+  Portuguese — João's own language; `pt_br` deliberately left for a future
+  community contribution rather than done now). Grepped the whole
+  `src/main/java` tree for `Component.literal`/`Component.translatable`
+  before translating anything — found exactly one user-facing string
+  (`potions-belt.belt.no_potions`), already using `Component.translatable`
+  correctly; no hardcoded-English debt from milestones 4-6's rapid
+  iteration, closing that open question from `MILESTONE7-DOCS.md`.
+  Contribution process (claim via the new `new_translation.md` issue
+  template, then PR a new lang JSON, vanilla's own silent fallback to
+  English covers incomplete translations) is documented, not yet exercised
+  by an actual outside contributor.
+- **`wiki/` folder (new, repo root)**: 8 pages drafted as plain markdown —
+  `Home`, `Installation`, `Main-Screen-and-HUD`, `Column-Loadouts`,
+  `Keybinds`, `Translations`, `FAQ-and-Troubleshooting`,
+  `Building-from-Source`. **Not yet in the actual GitHub wiki** — this
+  session has no GitHub write access (same limitation the Prompting Guide
+  already anticipated), and the real GitHub wiki is a separate git remote
+  (`<repo>.wiki.git`) this local checkout isn't set up to push to anyway.
+  João needs to enable the wiki (Settings > Features) and copy each page's
+  content in manually, or push `wiki/`'s content to the wiki remote
+  himself.
+
+Verification: `./gradlew build` (from `potions-belt-fabric-1.21.11/`) —
+`BUILD SUCCESSFUL`, all existing unit tests still pass. This session's
+changes are docs/resources/CI-config only, no gameplay code touched, so no
+in-game verification was needed.
+
+Left open for a future session:
+- Actually enabling GitHub Discussions and the wiki (repo settings only
+  João can flip) and copying `wiki/`'s pages in.
+- Milestone 10's remaining open question from `MILESTONE7-DOCS.md`: whether
+  to eventually add a build-time completeness check for lang files, versus
+  continuing to rely on vanilla's silent English fallback (current lean,
+  unchanged).
+- Milestone 8 (configurable settings) is still fully unimplemented — this
+  session's pivot was purely to milestone 7/10; `MILESTONE8-SETTINGS.md`'s
+  design from earlier today stands as next in line.
+
 ## Session 7 (2026-07-14): milestone 6 — sounds
 
 **Summary: milestone 6 fully closed out — sounds and the edge-case pass both

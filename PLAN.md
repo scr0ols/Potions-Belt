@@ -398,10 +398,18 @@ the modifier is a physically distinct key.)*
      default column — all verified in-game. (done 2026-07-14)
 
    **Milestone 6 complete.**
-7. Docs pass: review and update README.md (current build/run steps, feature
-   list, screenshots/icon if relevant) against actual end-state behavior, and
-   set up a wiki for the mod (usage guide, column-loadout explanation,
-   FAQ/troubleshooting).
+7. Docs pass (expanded 2026-07-15, see `MILESTONE7-DOCS.md` for full design
+   discussion): review and update README.md (current build/run steps,
+   feature list, badges, current status) against actual end-state behavior;
+   add the standard OSS community-health files (`CODE_OF_CONDUCT.md`
+   — Contributor Covenant, `CONTRIBUTING.md`, `SECURITY.md`); GitHub issue
+   templates (bug report, feature request, new translation), a PR template,
+   and Discussion category templates (Q&A, Ideas, Show & Tell — João enables
+   Discussions itself, a repo setting); and a wiki (usage guide,
+   column-loadout explanation, keybinds, FAQ/troubleshooting,
+   building-from-source, translations), drafted locally in a `wiki/` folder
+   for João to copy into the real GitHub wiki. Reference project for style:
+   `github.com/scr0ols/soundtweaks` (adapted, not copied).
 8. Configurable mod settings (candidate, not started — discussed 2026-07-14
    during milestone 6 playtesting, deliberately deferred rather than folded
    into that session). Needs its own persisted config (simple JSON via Gson
@@ -442,3 +450,15 @@ the modifier is a physically distinct key.)*
    skin choice needs to persist per-item (a data component, likely) or is
    purely cosmetic client-side, and whether it depends on milestone 8's
    settings work landing first.
+10. Localization / translations (scoped 2026-07-15 alongside milestone 7,
+    see `MILESTONE7-DOCS.md`). Initial set: `en_us` (exists) + `pt_pt`
+    (European Portuguese) only — the milestone's real goal is the
+    community-contribution *process*, not translating everything up front.
+    Contribution flow: a "New Translation" GitHub issue (claims the
+    language, points at the process) followed by a PR adding the new lang
+    JSON (copy `en_us.json`, translate values, same keys) — documented on
+    the wiki's Translations page. Open questions: full audit of any
+    hardcoded (non-translatable) user-facing strings from milestones 4-6's
+    rapid iteration, and whether to rely on vanilla's silent
+    fallback-to-English for incomplete translations (current lean) or add a
+    build-time completeness check.
