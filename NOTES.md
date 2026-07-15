@@ -1,5 +1,85 @@
 # Potion's Belt — Session notes
 
+## Session 7 (2026-07-14): milestone 6 — sounds
+
+**Summary: milestone 6 fully closed out — sounds and the edge-case pass both
+done, everything confirmed working in-game. Three custom sounds: `belt_open`
+(menu-open), `bottle_open` (drink-start), `bottle_close` (drink-end or
+abandoned). Build and all 11 tests pass throughout.**
+
+Three sounds, converted from João's recordings via
+`ffmpeg -c:a libvorbis -qscale:a 5` (Minecraft only loads Vorbis .ogg, not
+.wav) and registered in `ModSounds.java` as
+`SoundEvent.createVariableRangeEvent`s. Every source recording came in quiet
+(peaks between -5 and -17 dB) and needed a gain boost before encoding
+(`ffmpeg -af volume=<N>dB`, targeting a ~-2 dB peak) plus a full 1.0F
+`playSound` volume — worth checking for on any future sound addition, since
+it happened three times in a row.
+
+Final design, after several playtest rounds narrowed it down:
+- `belt_open`: plays in `PotionsBeltItem.openMenu()`, covering both entry
+  points (the dedicated keybind and the E-key redirect) since they share
+  that one method. Chosen over an equip/holding sound because Minecraft has
+  no generic "item picked up in hand" hook to attach one to.
+- `bottle_open`: plays in `use()`'s success branch, immediately before
+  `startUsingItem`, so it always lands ahead of the vanilla drink sound.
+- `bottle_close`: closes out *every* drink, consumed or not — the design
+  settled on "every drink resolves to open+drink+close (consumed) or
+  open+close (abandoned), never open with no resolution." Firing this
+  correctly needed three separate hooks, since no single vanilla mechanism
+  covers every way a drink can end:
+  - `releaseUsing()` (`Item#releaseUsing`) — manual early release.
+  - `LivingEntityMixin` (new, first mixin in this project targeting a
+    vanilla class instead of client input) — `LivingEntity.
+    updatingUsingItem()`'s own per-tick item-mismatch check, which calls
+    `stopUsingItem()` directly, bypassing `Item#releaseUsing` entirely.
+  - `ServerGamePacketListenerImplMixin` (new) — hotbar-slot switch
+    specifically turned out to be a *third*, separate bypass:
+    `handleSetCarriedItem` (the server's packet handler for the switch)
+    calls `stopUsingItem()` directly too, before `updatingUsingItem()` ever
+    gets a chance to run, so `LivingEntityMixin` alone doesn't catch it —
+    this took real `javap -c` digging to find, since it directly
+    contradicted an unverified claim in session 5's notes that
+    `Item#releaseUsing` was "vanilla's single hook for every early-stop
+    path" (it isn't, for hotbar switches specifically).
+  - `finishUsingItem`'s success branch, for the consumed case, via
+    `DelayedBottleClose.schedule()` (below) rather than an immediate call.
+
+`DelayedBottleClose` (new) ended up doing three jobs, each added in response
+to real in-game testing:
+1. **The ~0.2s "lower the bottle" delay** on the consumed-drink close only
+   (João's request, after confirming the vanilla drink sound already sits a
+   full 1.6s after `bottle_open` structurally — verified via `javap` that
+   `Consumable.onConsume`'s `GENERIC_DRINK` sound fires once, at completion,
+   not periodically). Deliberately *not* implemented by delaying
+   `startUsingItem()` itself: that would push total drink time past
+   vanilla's 1.6s (conflicts with PLAN.md's "must not change game balance"
+   decision) and would need real cross-thread scheduling state that's a
+   genuine race condition in singleplayer (client prediction and the
+   integrated server share one JVM). Delaying only the *close*, after the
+   potion's already been fully applied server-side, sidesteps both problems.
+2. **Per-entity dedup**, after testing showed a single clean drink could
+   trigger two of the hooks above in close succession (a real race between
+   the natural-completion path and something else reaching `releaseUsing`
+   for the same drink — root mechanism not fully pinned down despite deep
+   `javap` tracing of `ServerGamePacketListenerImpl`/`releaseUsingItem`, but
+   the delay window is what made it audible). Fixed pragmatically: whichever
+   hook claims a given entity's close first (within a 10-tick window) wins,
+   any other trigger is silently ignored — robust regardless of which path
+   races first.
+3. **A hold-off gate on the *next* drink** (`hasPending`, checked in
+   `use()`), after chaining several drinks by holding right click showed the
+   next `bottle_open` could land on or right after the previous
+   `bottle_close` — first because nothing stopped a new drink from starting
+   the instant the close was scheduled, then (once gated) because the gate
+   cleared the instant the close sound *started* rather than after it
+   finished. Fixed by blocking new drinks until a short buffer past when the
+   close actually plays, not just until it's been scheduled.
+
+Temporary diagnostic logging (added mid-session to pin down the double-close
+race via `run/logs/latest.log`) was removed once its job was done, before
+committing.
+
 ## Session 6 (2026-07-14): milestone 6 — sticky column default + HUD preview
 
 **Summary: implemented the design settled at the end of session 5 (see that

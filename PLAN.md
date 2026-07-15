@@ -102,6 +102,18 @@ src/main/java/scr0ols/potionsbelt/
   PotionsBeltMenu.java      AbstractContainerMenu, 27 potion-only slots
   BeltInventory.java        slot-picking + compaction + component read/write
   BeltSelections.java       server-side sticky default column per player
+  ModSounds.java            custom SoundEvent registration (belt_open,
+                            bottle_open, bottle_close)
+  DelayedBottleClose.java   ~0.2s server-tick delay before bottle_close on a
+                            completed (consumed) drink only
+  mixin/LivingEntityMixin.java  common mixin: bottle_close when
+                            updatingUsingItem()'s own item-mismatch check
+                            stops a drink (bypasses Item#releaseUsing)
+  mixin/ServerGamePacketListenerImplMixin.java  common mixin: bottle_close
+                            specifically for hotbar-slot switch mid-drink
+                            (a separate, earlier bypass in
+                            handleSetCarriedItem, not covered by
+                            LivingEntityMixin)
   SelectColumnPayload.java  C2S payload: player picked column N
   OpenBeltMenuPayload.java  C2S payload: player pressed the open-menu keybind
 src/client/java/scr0ols/potionsbelt/
@@ -162,13 +174,74 @@ wraps read/modify/write of this component.
   item itself from being placed into its own 27-slot grid, unrelated to and
   unaffected by this change, so "belt inside itself" stays impossible for
   its own reason.)*
+- Opening the menu (either entry point) plays a custom `potions-belt:belt_open`
+  sound (`ModSounds`) — a recorded leather-belt sound, converted from .wav to
+  .ogg — via `level.playSound` in `PotionsBeltItem.openMenu`, same
+  broadcast-to-nearby-players pattern as the existing no-potions fail sound.
 
 ### Drinking (held right click)
 
 Maps onto the vanilla item-use system — no timers of our own:
-- `use()`: belt contains a potion anywhere -> `startUsingItem` (drink
-  animation, vanilla 32 ticks = 1.6 s, same as a normal potion). Right click
-  always means "drink" now, unconditionally — no sneak branch.
+- `use()`: belt contains a potion anywhere -> if the previous drink's
+  `bottle_close` is still pending *or* played too recently
+  (`DelayedBottleClose.hasPending`, which covers both the wait for the
+  scheduled close and a short buffer afterward), returns
+  `InteractionResult.PASS` and waits — vanilla retries `use()` on its own
+  every few ticks while right click stays held, so this just keeps chained
+  drinks in `open, drink, close, (gap), open, drink, close, ...` order with
+  an audible gap, instead of the next `bottle_open` landing on or right
+  after the previous `bottle_close`.
+  Otherwise plays a custom `potions-belt:bottle_open` sound immediately,
+  then `startUsingItem` (drink animation, vanilla 32 ticks = 1.6 s, same as
+  a normal potion, including its own vanilla drink sound during/after the
+  animation — the bottle-open sound is a distinct beat ahead of that, not a
+  replacement for it). Right click always means "drink" now,
+  unconditionally — no sneak branch.
+- Every drink now resolves to exactly one of two sound patterns: **open +
+  drink + (~0.2s pause) + close** (consumed — `finishUsingItem`'s success
+  branch schedules `bottle_close` via `DelayedBottleClose`, a small
+  server-only `ServerTickEvents.END_SERVER_TICK`-driven queue, ~4 ticks after
+  the vanilla drink sound plays — simulates lowering the bottle from mouth to
+  hand before the cap closes, instead of an instant cut) or **open + close**
+  (abandoned before finishing, still immediate — nothing was actually drunk
+  to "lower" first, so no delay needed there). `DelayedBottleClose` also
+  **dedupes per entity** (a 10-tick/0.5s claim window): a single drink can
+  trigger more than one of the paths below in close succession (e.g. the
+  natural completion racing a same-moment early-release signal, made audible
+  once the 0.2s delay gave it room to land inside), so whichever path claims
+  the close first wins and any other trigger for that entity within the
+  window is silently ignored, regardless of which path fires first. *(Revised 2026-07-14: the first cut only
+  played `bottle_close` on the abandoned case; João's testing while holding
+  right click through multiple drinks showed every completed drink needs its
+  own close too, not just abandoned ones.)*
+- `releaseUsing()`: plays `bottle_close` for a manual early release (button
+  let go before the animation ends).
+- `LivingEntityMixin` (common, targets vanilla `LivingEntity`): plays
+  `bottle_close` when `LivingEntity.updatingUsingItem()`'s own per-tick
+  mismatch check calls `stopUsingItem()` directly (item in hand no longer
+  matches what use started with) — the generic case, not hotbar-switch
+  specific (see below for why that turned out to be the wrong mixin for the
+  hotbar case). `stopUsingItem()` itself was confirmed via `javap -c` to be
+  a dead end for both this and `releaseUsing` — it only clears use-item
+  state.
+- `ServerGamePacketListenerImplMixin` (common, targets vanilla
+  `ServerGamePacketListenerImpl`): the mixin that actually covers
+  **hotbar-slot switch mid-drink**. `LivingEntityMixin` alone doesn't fire
+  for this case — `javap -c` on `handleSetCarriedItem` (the server's handler
+  for the hotbar-switch packet) showed it calls `player.stopUsingItem()`
+  **directly**, before even updating the selected slot, whenever the main
+  hand is the one being used — a separate, earlier bypass than
+  `updatingUsingItem()`'s own mismatch detection, which as a result never
+  gets a chance to run for this specific interaction (`isUsingItem()` is
+  already false by the time the next tick's check would happen). This mixin
+  injects right before that specific `stopUsingItem()` call.
+- Both `LivingEntityMixin` and `ServerGamePacketListenerImplMixin`, plus
+  `releaseUsing()`, funnel through `DelayedBottleClose.playImmediately()`
+  rather than playing the sound directly — see the dedup note below.
+- The mid-drink empty-column cancel (`onColumnSelected` calling
+  `stopUsingItem()` directly, its own separate bypass) still doesn't reach
+  any of the above — it keeps its own distinct "no potions" feedback instead
+  of layering `bottle_close` on top of it.
 - `finishUsingItem()` (server): resolve target slot — the player's default
   column (`BeltSelections`, sticky, starts at 1) via
   `BeltInventory.firstPotionSlotInColumn`; if that column is empty, falls
@@ -315,7 +388,16 @@ the modifier is a physically distinct key.)*
      up/dropped/dragged normally even while its own menu is open, matching
      vanilla item behavior. (done and in-game verified 2026-07-14, see
      NOTES.md)
-   - Still open: sounds, edge-case testing pass.
+   - ~~Sounds: custom "belt open" sound on menu-open (both entry points),
+     converted from a recorded .wav to .ogg, gain-boosted after playtesting
+     found the first pass too quiet.~~ (done 2026-07-14)
+   - ~~Edge-case testing pass~~: column row-fallback, default-empty fallback,
+     full-belt drink, mid-drink hotbar switch preserving the sticky default,
+     two-belts-share-one-default, splash/lingering still rejected, vanilla
+     hotbar/scroll untouched while belt isn't held, disconnect resets the
+     default column — all verified in-game. (done 2026-07-14)
+
+   **Milestone 6 complete.**
 7. Docs pass: review and update README.md (current build/run steps, feature
    list, screenshots/icon if relevant) against actual end-state behavior, and
    set up a wiki for the mod (usage guide, column-loadout explanation,
@@ -350,3 +432,13 @@ the modifier is a physically distinct key.)*
      `InventoryScreen` layout) and a tab component; meaningfully more work
      than the other two toggles, likely its own sub-task within this
      milestone rather than a quick addition.
+9. Belt skin/texture applier (idea only, raised 2026-07-14, not scoped —
+   for review next session). João's pitch: some kind of "applier" item or
+   mechanism to give the belt a more immersive texture/skin, rather than
+   the current single fixed appearance. Open questions to work out before
+   this becomes a real milestone: what "applier" means concretely (a
+   crafting recipe combining the belt with a dye/material, a GUI slot, a
+   resource-pack-driven variant system?), how many skins/textures, whether
+   skin choice needs to persist per-item (a data component, likely) or is
+   purely cosmetic client-side, and whether it depends on milestone 8's
+   settings work landing first.
