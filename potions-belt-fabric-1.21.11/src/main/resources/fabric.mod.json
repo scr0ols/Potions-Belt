@@ -22,6 +22,7 @@
 		]
 	},
 	"mixins": [
+		"potions-belt.mixins.json",
 		{
 			"config": "potions-belt.client.mixins.json",
 			"environment": "client"
