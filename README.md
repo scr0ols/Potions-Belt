@@ -13,19 +13,19 @@
 
 ## What it does
 
-Potion's Belt adds a single item: a 27-slot belt that only accepts
-drinkable potions, plus a fast way to drink from it without opening any
-GUI mid-fight.
+Potion's Belt adds a single item: a 27-slot belt that accepts drinkable
+potions and empty bottles, plus a fast way to drink from it without
+opening any GUI mid-fight.
 
 | Feature | Description |
 |---|---|
 | **Drink on right click** | The vanilla 1.6s drink animation and timing — no balance changes, just faster access. |
 | **Column-based loadout** | 3 rows x 9 columns. Dedicate each column to one potion type; drinking only ever replaces the exact slot drunk, so a column's contents never drift. |
 | **Sticky column selection** | Hold the remappable "Column Select" modifier + a hotbar key (1-9) or scroll to pick a column. Your pick is remembered as the default for every future drink, not just the current one. |
-| **Row fallback** | If a column's top potion is gone, the belt falls back to row 2, then row 3, before giving up. |
+| **Row and belt-wide fallback** | If the selected column's top potion is gone, the belt falls back to row 2, then row 3, of that column; if the whole column is empty, it falls back further to the first potion anywhere in the belt, only failing outright if the belt has none left at all. |
 | **HUD preview** | An icon + name next to the hotbar always shows exactly which potion is about to be drunk. |
 | **Bottles return to the belt** | Drinking turns only that slot into an empty bottle, in place — nothing else shifts. |
-| **Two ways to open the GUI** | A dedicated keybind, or just <kbd>E</kbd> while the belt is your held item. |
+| **Two ways to open the GUI** | A dedicated keybind (either hand), or <kbd>E</kbd> while the belt is specifically your **main-hand** item. |
 | **Custom sounds** | Distinct sounds for opening the belt and for each drink starting/ending. |
 
 > [!TIP]
