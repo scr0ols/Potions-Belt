@@ -264,6 +264,50 @@ an authenticated GitHub API connection, neither of which this session has
 for that specific feature. That part of the correction stands — enabling
 Discussions and creating its categories is still on João.
 
+**Follow-up (2026-07-15): addressed all 9 findings from GitHub Copilot's
+automated review on PR #10** (`main` <- `docs`, opened by João covering
+everything up to this session). Verified each against the actual current
+source before fixing anything — all 9 held up:
+- `PotionsBeltItem.onColumnSelected` now validates the column from
+  `SelectColumnPayload` is in 1-9 before storing it, at the network
+  boundary itself. Functionally this was already harmless (every consumer,
+  `firstPotionSlotInColumn`, already bounds-checks and returns -1 for an
+  out-of-range value), but it's exactly the kind of "user input, network
+  payload" boundary CONTRIBUTING.md's own coding-style section says to
+  validate, and it makes SECURITY.md's "bounded column number" claim
+  literally true rather than true by accident of a downstream check.
+- `DelayedBottleClose.tick()` now prunes `LAST_CLOSE_TICK` and
+  `BLOCK_NEXT_DRINK_UNTIL` once an entry is past its relevant window.
+  Confirmed via code read: both are `Map<UUID, Integer>` that previously
+  only ever grew, never shrank — bounded in practice by "one entry per
+  distinct entity that has ever triggered a drink" (repeat drinks by the
+  same entity overwrite their existing key, not add new ones), but still
+  unbounded over a long-running public server's full player turnover.
+  Real, if low-severity and slow.
+- Five documentation/comment accuracy fixes, all confirmed against actual
+  behavior: `PotionsBeltMenu`'s class javadoc and `PotionSlot`'s comment
+  both said "potion-only" when `BeltInventory.isAcceptable()` also allows
+  empty bottles (matches the deliberate, already-documented milestone-4
+  decision — just the comments hadn't kept up); README's intro line had
+  the same "only accepts drinkable potions" phrasing; README's row
+  fallback bullet described only the row 2/3 fallback within a column, not
+  the further fallback to "first potion anywhere in the belt" that
+  `finishUsingItem` actually does once the whole column is empty; and
+  README's E-key bullet implied either hand when `KeybindsMixin` only
+  intercepts E for the belt in **main hand** specifically (matches
+  PLAN.md's documented, deliberate scoping). Also dropped the
+  "(hold + 1-9)" parenthetical from both lang files' `select_modifier`
+  label — it's player-visible in Controls and was already stale (scroll
+  is gated by the same modifier, not just hotbar keys); picked "drop the
+  specific-input enumeration" over "list scroll too," since a Controls
+  label re-listing every input it gates is more likely to go stale again
+  than a plain name.
+
+All fixes pushed to `dev`, then merged into `docs` too (PR #10 compares
+`main`...`docs`, not `dev` — the fix commit had to land on `docs`
+specifically for the PR to pick it up). `./gradlew build`: BUILD
+SUCCESSFUL, all unit tests still pass.
+
 ## Session 7 (2026-07-14): milestone 6 — sounds
 
 **Summary: milestone 6 fully closed out — sounds and the edge-case pass both
