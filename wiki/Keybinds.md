@@ -10,6 +10,8 @@
 | Open Belt Menu | Opens the belt's 27-slot GUI, from either hand. |
 | Column Select Modifier | Hold this, then press a hotbar key (1-9) or scroll, to pick a column while the belt is held. See [Column Loadouts](Column-Loadouts.md). |
 
+---
+
 ## Interaction with vanilla keys
 
 - <kbd>E</kbd> (vanilla "Open/Close Inventory") also opens the belt's menu,

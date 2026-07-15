@@ -5,21 +5,28 @@
 - JDK 21.
 - Git.
 
+---
+
 ## Steps
 
 ```
 git clone https://github.com/scr0ols/Potions-Belt.git
 cd Potions-Belt/potions-belt-fabric-1.21.11
+```
+
+**Linux / macOS**
+```bash
 ./gradlew build        # produces the mod jar in build/libs/, runs unit tests
+./gradlew runClient    # launches a dev client with the mod already loaded
 ```
 
-On Windows, use `gradlew.bat` instead of `./gradlew`.
-
-To launch a development client with the mod already loaded:
-
+**Windows**
+```bat
+gradlew.bat build
+gradlew.bat runClient
 ```
-./gradlew runClient
-```
+
+---
 
 ## Repository layout
 
@@ -29,16 +36,21 @@ root only holds project documentation (`README.md`, `PLAN.md`, `NOTES.md`,
 this `wiki/` folder). Always run Gradle commands from inside
 `potions-belt-fabric-1.21.11/`, not the repo root.
 
+---
+
 ## Running tests only
 
 ```
 ./gradlew test
 ```
 
-Note: unit tests cover pure logic (slot-picking, fallback rules) but
-**cannot** catch mixin-apply errors, which only surface when the game
-actually launches (`./gradlew runClient`). A green `./gradlew build` is
-necessary but not sufficient proof that a change involving mixins is safe.
+> [!WARNING]
+> Unit tests cover pure logic (slot-picking, fallback rules) but **cannot**
+> catch mixin-apply errors, which only surface when the game actually
+> launches (`./gradlew runClient`). A green `./gradlew build` is necessary
+> but not sufficient proof that a change involving mixins is safe.
+
+---
 
 ## Contributing changes back
 

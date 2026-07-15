@@ -11,6 +11,8 @@
 
 </div>
 
+---
+
 ## What it does
 
 Potion's Belt adds a single item: a 27-slot belt that accepts drinkable
@@ -36,6 +38,8 @@ opening any GUI mid-fight.
 Full behavior spec and edge cases: [PLAN.md](PLAN.md). Full session history
 and the reasoning behind every design decision: [NOTES.md](NOTES.md).
 
+---
+
 ## Requirements
 
 | | |
@@ -50,6 +54,8 @@ and the reasoning behind every design decision: [NOTES.md](NOTES.md).
 > the mod on both the server and every client — see the wiki's
 > [Installation](../../wiki/Installation) page.
 
+---
+
 ## Installation
 
 1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11.
@@ -60,6 +66,8 @@ and the reasoning behind every design decision: [NOTES.md](NOTES.md).
 See the [wiki](../../wiki) for a full usage guide, keybind setup, and
 column-loadout tips.
 
+---
+
 ## Languages
 
 | Language | Locale | File |
@@ -67,8 +75,11 @@ column-loadout tips.
 | 🇬🇧 English (US) | `en_us` | [`en_us.json`](potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/en_us.json) |
 | 🇵🇹 Portuguese (Portugal) | `pt_pt` | [`pt_pt.json`](potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/pt_pt.json) |
 
-Want to add or fix a translation? See the wiki's
-[Translations](../../wiki/Translations) page.
+> [!NOTE]
+> Want to add or fix a translation? See the wiki's
+> [Translations](../../wiki/Translations) page.
+
+---
 
 ## Loader: Fabric (decided, do not revisit)
 
@@ -86,6 +97,8 @@ the choice was practical:
   NeoForge's item-handler advantage is irrelevant here since vanilla data
   components already cover item-stored inventories.
 
+---
+
 ## Repository layout
 
 ```
@@ -94,16 +107,29 @@ wiki/                              wiki pages, drafted locally for now
 potions-belt-fabric-1.21.11/       the Fabric mod (Gradle project root)
 ```
 
+---
+
 ## Build & run
 
 Requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
 
-```
+**Linux / macOS**
+```bash
 ./gradlew build        # produces the mod jar in build/libs/, runs unit tests
 ./gradlew runClient    # launches a dev Minecraft client with the mod
 ```
 
-On Windows use `gradlew.bat` instead of `./gradlew`.
+**Windows**
+```bat
+gradlew.bat build
+gradlew.bat runClient
+```
+
+> [!TIP]
+> The built jar ends up in `build/libs/` — drop that jar (not the
+> `-sources.jar`) into your `mods/` folder to test a local build.
+
+---
 
 ## Contributing
 
@@ -116,10 +142,14 @@ issues: see [SECURITY.md](SECURITY.md).
 > Target the `dev` branch, not `main`, when opening a pull request — see
 > Branches below.
 
+---
+
 ## Branches
 
 Development happens on `dev`; `main` holds the stable state and is updated
 by merging `dev` when a milestone is ready.
+
+---
 
 ## Status
 
@@ -139,6 +169,8 @@ in-game verified; polish, docs, and configurability are ongoing.
       combined inventory+belt tab)
 - [ ] Localization: community translation process + initial languages
 - [ ] Belt skin/texture applier (idea stage, not scoped)
+
+---
 
 ## License
 
