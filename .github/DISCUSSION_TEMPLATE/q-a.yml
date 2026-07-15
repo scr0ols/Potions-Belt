@@ -1,0 +1,17 @@
+title: "[Q&A] "
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What are you trying to do, and what's unclear or not working as expected?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Setup
+      description: Minecraft/Fabric/mod versions, other mods installed, single-player or multiplayer.
+    validations:
+      required: false
