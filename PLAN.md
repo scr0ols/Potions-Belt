@@ -183,8 +183,9 @@ Maps onto the vanilla item-use system — no timers of our own:
 ## Milestones (sessions)
 
 1. ~~Planning + repo init, README, .gitignore.~~ (done 2026-07-13)
-2. Project skeleton builds and runs: belt item registered, texture, recipe;
-   template cleanup (package rename, drop blocks/mixin examples, metadata).
+2. ~~Project skeleton builds and runs: belt item registered, texture, recipe;
+   template cleanup (package rename, drop blocks/mixin examples, metadata).~~
+   (done 2026-07-13)
 3. GUI: menu + screen + potion-only filter + component persistence.
 4. Drinking: held right click, first-available logic, bottle-to-belt
    compaction.

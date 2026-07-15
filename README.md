@@ -52,13 +52,18 @@ Requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
 
 On Windows use `gradlew.bat` instead of `./gradlew`.
 
+## Branches
+
+Development happens on `dev`; `main` holds the stable state and is updated
+by merging `dev` when a milestone is ready.
+
 ## Status
 
 **In development — not yet playable.**
 
 - [x] Planning: loader decision, architecture, edge cases ([PLAN.md](PLAN.md))
 - [x] Repository setup
-- [ ] Skeleton builds and runs (belt item registered, texture, recipe)
+- [x] Skeleton builds and runs (belt item registered, texture, recipe)
 - [ ] GUI (3x9 menu, potion-only filter, persistence)
 - [ ] Drinking via held right click
 - [ ] Column selection via number keys
