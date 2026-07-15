@@ -33,6 +33,7 @@ truly has nothing left to drink.
 
 ## Two belts, one default
 
-The column default is tracked per player, not per belt item — if you're
-carrying two belts, they share the same selected column. This is a known
-current limitation, not a bug.
+> [!NOTE]
+> The column default is tracked per player, not per belt item — if you're
+> carrying two belts, they share the same selected column. This is a known
+> current limitation, not a bug.

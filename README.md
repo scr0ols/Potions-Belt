@@ -1,3 +1,5 @@
+<div align="center">
+
 # Potion's Belt
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11-62B47A)](https://www.minecraft.net/)
@@ -5,30 +7,31 @@
 [![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
-A Minecraft mod that adds a **potion belt**: a wearable-in-hand container
-item with a chest-like 3x9 GUI (27 slots) that only accepts drinkable
-potions, built for players who want fast, deliberate access to a whole
-loadout of potions without digging through the hotbar or inventory.
+*A dedicated 3x9 potion container with fast, column-based drinking — no more digging through the hotbar.*
+
+</div>
 
 ## What it does
 
-- **Right click** with the belt in hand to drink a potion — the vanilla
-  1.6s drink animation and timing, no balance changes.
-- **Column selection**: hold the remappable "Column Select" modifier while
-  pressing a hotbar key (1-9) or scrolling to pick which of the belt's 9
-  columns to drink from. The choice becomes your **sticky default** — it
-  stays selected across drinks until you change it, not just for the one
-  in progress.
-- **Row fallback**: if the chosen column's top potion is gone, the belt
-  automatically falls back to row 2, then row 3, before giving up.
-- **HUD preview**: a small icon and name, next to the hotbar, always shows
-  which potion is about to be drunk — so you never have to guess.
-- **Empty bottles return to the belt**, in place — drinking a potion turns
-  only that slot into a bottle; every other slot is untouched, so your
-  column-based loadout never drifts.
-- **Open the belt's GUI** with the dedicated "Open Belt Menu" keybind, or
-  just press <kbd>E</kbd> while the belt is your held item.
-- **Custom sounds** for opening the belt and for each drink starting/ending.
+Potion's Belt adds a single item: a 27-slot belt that only accepts
+drinkable potions, plus a fast way to drink from it without opening any
+GUI mid-fight.
+
+| Feature | Description |
+|---|---|
+| **Drink on right click** | The vanilla 1.6s drink animation and timing — no balance changes, just faster access. |
+| **Column-based loadout** | 3 rows x 9 columns. Dedicate each column to one potion type; drinking only ever replaces the exact slot drunk, so a column's contents never drift. |
+| **Sticky column selection** | Hold the remappable "Column Select" modifier + a hotbar key (1-9) or scroll to pick a column. Your pick is remembered as the default for every future drink, not just the current one. |
+| **Row fallback** | If a column's top potion is gone, the belt falls back to row 2, then row 3, before giving up. |
+| **HUD preview** | An icon + name next to the hotbar always shows exactly which potion is about to be drunk. |
+| **Bottles return to the belt** | Drinking turns only that slot into an empty bottle, in place — nothing else shifts. |
+| **Two ways to open the GUI** | A dedicated keybind, or just <kbd>E</kbd> while the belt is your held item. |
+| **Custom sounds** | Distinct sounds for opening the belt and for each drink starting/ending. |
+
+> [!TIP]
+> All of Potion's Belt's keybinds are **unbound by default** and fully
+> remappable under **Options > Controls > Potions Belt** — see the
+> [Keybinds wiki page](../../wiki/Keybinds) before your first drink.
 
 Full behavior spec and edge cases: [PLAN.md](PLAN.md). Full session history
 and the reasoning behind every design decision: [NOTES.md](NOTES.md).
@@ -42,6 +45,11 @@ and the reasoning behind every design decision: [NOTES.md](NOTES.md).
 | Fabric API | 0.141.3+1.21.11 |
 | Java | 21+ |
 
+> [!NOTE]
+> The belt's consumption logic runs server-side, so multiplayer requires
+> the mod on both the server and every client — see the wiki's
+> [Installation](../../wiki/Installation) page.
+
 ## Installation
 
 1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11.
@@ -51,6 +59,16 @@ and the reasoning behind every design decision: [NOTES.md](NOTES.md).
 
 See the [wiki](../../wiki) for a full usage guide, keybind setup, and
 column-loadout tips.
+
+## Languages
+
+| Language | Locale | File |
+|---|---|---|
+| 🇬🇧 English (US) | `en_us` | [`en_us.json`](potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/en_us.json) |
+| 🇵🇹 Portuguese (Portugal) | `pt_pt` | [`pt_pt.json`](potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/pt_pt.json) |
+
+Want to add or fix a translation? See the wiki's
+[Translations](../../wiki/Translations) page.
 
 ## Loader: Fabric (decided, do not revisit)
 
@@ -94,6 +112,10 @@ Contributions, bug reports, and translations are welcome — see
 [Code of Conduct](CODE_OF_CONDUCT.md) for community standards. Security
 issues: see [SECURITY.md](SECURITY.md).
 
+> [!WARNING]
+> Target the `dev` branch, not `main`, when opening a pull request — see
+> Branches below.
+
 ## Branches
 
 Development happens on `dev`; `main` holds the stable state and is updated
@@ -120,4 +142,8 @@ in-game verified; polish, docs, and configurability are ongoing.
 
 ## License
 
+<div align="center">
+
 [MIT](LICENSE)
+
+</div>

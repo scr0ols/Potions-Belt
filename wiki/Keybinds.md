@@ -1,8 +1,9 @@
 # Keybinds
 
-All of Potion's Belt's keybinds are **unbound by default** and fully
-remappable, on purpose — set them up under
-**Options > Controls > Potions Belt** to whatever fits your own layout.
+> [!TIP]
+> All of Potion's Belt's keybinds are **unbound by default** and fully
+> remappable, on purpose — set them up under
+> **Options > Controls > Potions Belt** to whatever fits your own layout.
 
 | Keybind | What it does |
 |---|---|
@@ -20,3 +21,10 @@ remappable, on purpose — set them up under
   while the belt is in your hand.
 - Right click is unconditionally "drink" — it's never repurposed to open
   the menu, regardless of sneaking or any other modifier.
+
+> [!WARNING]
+> While the Column Select Modifier is held and the belt is in hand,
+> scrolling cycles the column instead of switching your hotbar slot. To
+> switch slots by scroll while holding the belt, either release the
+> modifier first or use the vanilla number keys instead — a known,
+> accepted trade-off.

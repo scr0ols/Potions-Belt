@@ -1,12 +1,16 @@
+<div align="center">
+
 # Potion's Belt Wiki
 
-Potion's Belt adds a 27-slot (3x9) belt item that holds potions and lets you
-drink them quickly without opening your full inventory.
+*A dedicated 3x9 potion container with fast, column-based drinking.*
 
-**These pages are drafted locally in the main repo's `wiki/` folder and
-need to be copied into the actual GitHub wiki** (enable it under repo
-Settings > Features > Wikis, then create each page with the matching
-title and paste its content).
+</div>
+
+> [!NOTE]
+> These pages are drafted locally in the main repo's `wiki/` folder and
+> need to be copied into the actual GitHub wiki (enable it under repo
+> Settings > Features > Wikis, then create each page with the matching
+> title and paste its content).
 
 ## Pages
 
