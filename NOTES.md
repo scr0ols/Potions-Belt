@@ -1,23 +1,53 @@
 # Potion's Belt — Session notes
 
-## Session 9 (2026-07-15): fabric.mod.json version requirement — 26.1+
+## Session 9 (2026-07-15): 26.1/26.2 investigated and reverted — real version mismatch, not a rename
 
-**Summary: fixed a Fabric Loader "Incompatible mods found" error João hit
-testing via the Modrinth App — `fabric.mod.json` still declared
-`"minecraft": "~1.21.11"`, but João's instance reports the game version as
-`26.2`. Widened the declared requirement to `">=26.1"` (open-ended, per
-João's call) and updated the matching version references in README.md
-(badge, requirements table, install step).**
+**Summary: João hit a Fabric Loader "Incompatible mods found" error testing
+via the Modrinth App (instance on Minecraft 26.2, mod declared
+`~1.21.11`). First attempt widened `fabric.mod.json`'s requirement to
+`>=26.1`, assuming 26.1/26.2 was a Mojang renumbering of the 1.21.x line.
+That assumption was wrong on two independent counts, so the change was
+reverted — `fabric.mod.json` is back to `"minecraft": "~1.21.11"`, README
+back to 1.21.11 throughout, `./gradlew build` confirmed green again
+(BUILD SUCCESSFUL, all tests pass, jar regenerated).**
 
-`potions-belt-fabric-1.21.11/gradle.properties` still pins
-`minecraft_version=1.21.11` for the actual Loom build/mappings — that wasn't
-touched, only the runtime compatibility predicate in `fabric.mod.json` and
-its README mentions. No code changes; not rebuilt or tested in-game against
-26.1/26.2 this session.
+How this got caught, in order:
+1. **`./gradlew build` failed self-consistency.** With the `>=26.1` change
+   in place, the `:test` task failed —
+   `net.fabricmc.loader.impl.FormattedException: [...] requires version 26.1
+   or later of 'Minecraft', but only the wrong version is present: 1.21.11!`
+   The Loom test environment's own Fabric Loader instance reports the
+   actual game version as `1.21.11` (from `gradle.properties`'
+   `minecraft_version=1.21.11`), so the mod failed its own loader's
+   compatibility check against itself.
+2. **Fabric's meta API confirms 26.1/26.2 are real, separate Minecraft
+   versions**, not a rename: `meta.fabricmc.net/v2/versions/game` lists
+   `26.2`, `26.1.2`, `26.1.1`, `26.1` as their own stable entries alongside
+   (not replacing) `1.21.11`. Fabric API already has builds tagged for
+   26.1 (e.g. `0.145.1+26.1`), but **Yarn mappings and even intermediary
+   mappings for 26.1/26.2 aren't published yet**
+   (`meta.fabricmc.net/v2/versions/yarn/26.1` returns `[]`; the intermediary
+   endpoint returns a `0.0.0` placeholder) — so a real Loom migration to
+   26.x isn't currently possible with this toolchain regardless of mapping
+   choice.
+3. **João shared an actual crash log** (mclo.gs) from running the `>=26.1`
+   build on his real 26.2 instance: Fabric Loader accepted the metadata
+   this time, but the game crashed with `NoClassDefFoundError` on
+   `net/minecraft/class_1657` and mixin failures targeting
+   `class_1309`/`class_3244`/`class_310` — intermediary class names from
+   1.21.11 that don't exist in 26.2's build. Confirms the jar is
+   byte-for-byte compiled against 1.21.11 and cannot run on 26.2 no matter
+   what the manifest claims.
 
-Left open for a future session: if a future Minecraft release breaks
-compatibility despite the open-ended `>=26.1`, tighten the range (e.g.
-`>=26.1 <27`) at that point rather than pre-emptively bounding it now.
+Conclusion: the fix isn't a metadata change at all. João needs a Minecraft
+**1.21.11** instance in the Modrinth App (Fabric Loader, matching
+`fabricloader": ">=0.18.4"` and `fabric-api` for 1.21.11) to run this build.
+A real 26.1/26.2 port would require Fabric's Yarn/intermediary mappings for
+that version to exist first (they don't yet as of this session), then a
+full recompile against them — not attempted here.
+
+Left open for a future session: revisit a 26.x port once Fabric publishes
+Yarn/intermediary mappings for that line.
 
 ## Session 8 (2026-07-15): milestone 8 design discussion + repo cleanup
 
