@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** 27 potion-only slots (3x9), same layout as the vanilla shulker box menu. */
+/** 27 slots (3x9), same layout as the vanilla shulker box menu; accepts drinkable potions and empty bottles (see BeltInventory.isAcceptable). */
 public class PotionsBeltMenu extends AbstractContainerMenu {
 
     private static final int BELT_SLOTS = BeltInventory.SIZE;
@@ -81,7 +81,7 @@ public class PotionsBeltMenu extends AbstractContainerMenu {
         return true;
     }
 
-    /** Belt grid slot: accepts drinkable potions only (moveItemStackTo also honors this). */
+    /** Belt grid slot: accepts drinkable potions and empty bottles, nothing else (moveItemStackTo also honors this). */
     private static class PotionSlot extends Slot {
         PotionSlot(Container container, int slot, int x, int y) {
             super(container, slot, x, y);

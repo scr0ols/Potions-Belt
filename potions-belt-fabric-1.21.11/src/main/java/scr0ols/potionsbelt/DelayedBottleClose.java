@@ -92,6 +92,11 @@ public class DelayedBottleClose {
 
     public static void tick(MinecraftServer server) {
         currentTick++;
+        // Entries past their relevant window are dead weight -- without this,
+        // a long-running server would accumulate one forever for every
+        // distinct entity that ever triggered a drink.
+        LAST_CLOSE_TICK.values().removeIf(last -> currentTick - last >= DEDUP_WINDOW_TICKS);
+        BLOCK_NEXT_DRINK_UNTIL.values().removeIf(until -> currentTick >= until);
         Iterator<Pending> it = PENDING.iterator();
         while (it.hasNext()) {
             Pending pending = it.next();

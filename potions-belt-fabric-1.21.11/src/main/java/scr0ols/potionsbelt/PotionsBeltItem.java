@@ -98,6 +98,12 @@ public class PotionsBeltItem extends Item {
      * drink" feedback at the end.
      */
     public static void onColumnSelected(Player player, int column) {
+        // column is client-controlled network input: validate at this
+        // boundary rather than trusting it, even though every current
+        // consumer (firstPotionSlotInColumn) already bounds-checks it too.
+        if (column < 1 || column > BeltInventory.COLUMNS) {
+            return;
+        }
         BeltSelections.set(player, column);
         if (!player.isUsingItem()) {
             return;
