@@ -1,4 +1,4 @@
-package scr0ols.potionsbelt.modid;
+package scr0ols.potionsbelt;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
@@ -28,6 +28,6 @@ public class ModItems {
             entries.accept(POTIONS_BELT);
         });
 
-        PotionsBelt.LOGGER.info("ModItems inicializado!");
+        PotionsBelt.LOGGER.info("ModItems initialized");
     }
 }

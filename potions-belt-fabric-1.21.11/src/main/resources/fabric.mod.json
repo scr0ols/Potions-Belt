@@ -3,32 +3,24 @@
 	"id": "potions-belt",
 	"version": "${version}",
 	"name": "Potion's Belt",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A wearable potion belt: a 27-slot container that only accepts potions. Hold right click to drink the first available potion, or press a number key (1-9) while drinking to pick a column.",
 	"authors": [
-		"Me!"
+		"Scr0ols"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/scr0ols/Potions-Belt"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/potions-belt/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"scr0ols.potionsbelt.modid.PotionsBelt"
+			"scr0ols.potionsbelt.PotionsBelt"
 		],
 		"client": [
-			"scr0ols.potionsbelt.modid.PotionsBeltClient"
+			"scr0ols.potionsbelt.PotionsBeltClient"
 		]
 	},
-	"mixins": [
-		"potions-belt.mixins.json",
-		{
-			"config": "potions-belt.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
 		"fabricloader": ">=0.18.4",
 		"minecraft": "~1.21.11",

@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "potions-belt:item/potions_belt"
+  }
+}
