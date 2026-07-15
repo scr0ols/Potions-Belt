@@ -213,8 +213,8 @@ changes are docs/resources/CI-config only, no gameplay code touched, so no
 in-game verification was needed.
 
 Left open for a future session:
-- Actually enabling GitHub Discussions and the wiki (repo settings only
-  João can flip) and copying `wiki/`'s pages in.
+- Actually enabling GitHub Discussions (repo setting only João can flip) —
+  see the correction below, the wiki half of this is done.
 - Milestone 10's remaining open question from `MILESTONE7-DOCS.md`: whether
   to eventually add a build-time completeness check for lang files, versus
   continuing to rely on vanilla's silent English fallback (current lean,
@@ -222,6 +222,47 @@ Left open for a future session:
 - Milestone 8 (configurable settings) is still fully unimplemented — this
   session's pivot was purely to milestone 7/10; `MILESTONE8-SETTINGS.md`'s
   design from earlier today stands as next in line.
+
+**Correction, same day: the GitHub wiki was already enabled, and this
+session does have git push access to GitHub.** The claim above ("no GitHub
+write access... João needs to copy each page's content in manually") was
+wrong on both counts — caught when João pushed back with "check again!!"
+after being told the wiki repo didn't exist. Re-checking with `git
+ls-remote https://github.com/scr0ols/Potions-Belt.wiki.git` showed it very
+much did (a `master` branch with GitHub's default placeholder `Home.md`,
+already at 2 revisions — João must have enabled it between the two
+messages, or it already was and the first check used a stale assumption).
+Separately, `git push origin docs` had already succeeded earlier in this
+same session, which should have been the tell that this checkout has real
+push credentials to `github.com/scr0ols/Potions-Belt` — GitHub wikis are
+just a second git remote (`<repo>.wiki.git`) on the same auth, no different
+permission needed. Lesson: don't assume "no GitHub access" from an earlier,
+different limitation (the Prompting Guide's note was about a *different*,
+web-based Claude session with no local disk/git at all — doesn't apply to
+Claude Code with a working git remote).
+
+Fixed: cloned the wiki repo into scratch, copied `wiki/`'s 8 pages in,
+adjusted links for the wiki's actual context (same-wiki page links changed
+from `Page.md` to bare `Page` — GitHub wiki's own routing convention;
+`../PLAN.md`/`../NOTES.md`/`../CONTRIBUTING.md`, which only resolve
+correctly from *inside* the main repo's `wiki/` folder, became full
+`github.com/.../blob/dev/...` URLs instead — the `../../issues/...` and
+`../../discussions/...` links needed no change, since GitHub's wiki-page
+URL path (`/owner/repo/wiki/Page`) happens to resolve two `../` back to the
+repo root correctly either way), committed, and pushed directly to
+`master` on the wiki remote. Verified live in-browser: all 8 pages listed
+in the wiki sidebar, cross-page links resolve correctly (checked
+Home -> Installation). The main repo's own `wiki/` folder is unchanged —
+its relative links are correct *for that context* (viewed via the normal
+repo file browser, sitting next to `PLAN.md`), so syncing the wiki-repo's
+link fixes back into it would have broken them there instead; the two
+copies are intentionally not link-identical.
+
+Discussions is still genuinely different: no git remote backs it, it's
+pure GitHub app data (categories, posts) only reachable via the web UI or
+an authenticated GitHub API connection, neither of which this session has
+for that specific feature. That part of the correction stands — enabling
+Discussions and creating its categories is still on João.
 
 ## Session 7 (2026-07-14): milestone 6 — sounds
 
