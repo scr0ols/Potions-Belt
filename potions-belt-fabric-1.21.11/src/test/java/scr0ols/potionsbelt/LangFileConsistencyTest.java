@@ -3,6 +3,7 @@ package scr0ols.potionsbelt;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -27,9 +29,12 @@ class LangFileConsistencyTest {
     private static final Type LANG_MAP_TYPE = new TypeToken<Map<String, String>>() {}.getType();
 
     private static Map<String, String> readLang(File file) throws IOException {
-        try (var reader = Files.newBufferedReader(file.toPath())) {
-            return new Gson().fromJson(reader, LANG_MAP_TYPE);
+        Map<String, String> lang;
+        try (var reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            lang = new Gson().fromJson(reader, LANG_MAP_TYPE);
         }
+        assertNotNull(lang, file.getName() + " failed to parse as a JSON object");
+        return lang;
     }
 
     @Test
