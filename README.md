@@ -82,24 +82,6 @@ column-loadout tips.
 
 ---
 
-## Loader: Fabric (decided, do not revisit)
-
-Why Fabric over (Neo)Forge — both can implement everything this mod needs
-(custom item, container menu, client key interception, custom payloads), so
-the choice was practical:
-
-- A working Fabric Gradle template with coherent pinned versions already
-  existed for this project.
-- Lighter toolchain and faster client launches for iterating on input/GUI
-  behavior.
-- Current, first-class documentation (docs.fabricmc.net) for exactly the
-  patterns this mod uses: screen handlers, custom payloads, mixins.
-- Classic Forge is legacy for 1.21+ (NeoForge is its successor), and
-  NeoForge's item-handler advantage is irrelevant here since vanilla data
-  components already cover item-stored inventories.
-
----
-
 ## Repository layout
 
 ```
