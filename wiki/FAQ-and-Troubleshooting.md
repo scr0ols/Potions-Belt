@@ -43,5 +43,5 @@ accepted. This may change in a future update.
 
 ## I found a bug that isn't covered here
 
-Open a [bug report](../../issues/new?template=bug_report.md) with your
+Open a [bug report](../issues/new?template=bug_report.md) with your
 versions and steps to reproduce.

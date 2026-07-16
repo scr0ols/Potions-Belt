@@ -17,7 +17,7 @@ every other mod uses.
 ## Contributing a new language
 
 1. **Claim the language first**: open an issue using the
-   [new translation template](../../issues/new?template=new_translation.md),
+   [new translation template](../issues/new?template=new_translation.md),
    naming the [Minecraft locale code](https://minecraft.wiki/w/Language)
    you're translating (e.g. `de_de`, `fr_fr`). This avoids two people
    translating the same language at once.

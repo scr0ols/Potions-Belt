@@ -1,5 +1,57 @@
 # Potion's Belt — Session notes
 
+## Session 12 (2026-07-15): milestone 10 — localization completeness check + wiki link fixes
+
+**Summary: Resolved milestone 10's one open design question (build-time
+completeness check vs. relying on vanilla's silent fallback) and closed out
+the remaining audit/verification items. Decided against a hard-failing
+completeness check: the wiki's Translations page already documents and
+commits to "you don't need every key translated before opening a PR", so a
+test that fails the build on missing keys would contradict the documented
+contribution flow. Instead added `LangFileConsistencyTest`
+(`src/test/java/scr0ols/potionsbelt/LangFileConsistencyTest.java`), a
+narrower, non-conflicting check: every key in a non-English lang file must
+exist in `en_us.json`. Missing keys stay fine (fallback); a key that
+doesn't exist in `en_us.json` at all is a typo or stale entry, a real bug
+vanilla would silently swallow for the wrong reason. Verified the test
+actually catches a typo (temporarily renamed a `pt_pt.json` key, confirmed
+the test failed, reverted, confirmed it passes again).**
+
+- Re-audited for hardcoded (`Component.literal`) user-facing strings across
+  both `src/main/java` and `src/client/java` (the earlier audit only
+  covered `src/main/java`) — none found. The only client-side text render
+  (`BeltHud`'s `preview.getHoverName()`) pulls the potion `ItemStack`'s own
+  vanilla-localized display name, not a literal.
+- Verified the contribution flow end-to-end against the *live* GitHub wiki
+  (not just the local `wiki/` draft) and found both were broken: the "New
+  Translation" and "bug report" issue-template links on the Translations
+  and FAQ-and-Troubleshooting pages used `../../issues/new?template=...`,
+  one `../` too many. Wiki pages live at `/owner/repo/wiki/Page`, so only
+  one `../` reaches the repo root — confirmed by loading the live link
+  (landed on GitHub's 404) and reading `window.location.href` to see the
+  resolved URL was missing the repo segment. Fixed both links in the local
+  `wiki/` drafts (`Translations.md`, `FAQ-and-Troubleshooting.md`); the
+  live wiki pages need the same one-`../` fix applied manually next time
+  João copies these over, since the live wiki is a separate copy that
+  doesn't auto-sync from this repo.
+- Also spot-checked the README's `../../wiki/Translations` link and
+  `CONTRIBUTING.md`'s direct `.github/ISSUE_TEMPLATE/...` link against the
+  live site — both resolve correctly (different relative-path depth than
+  wiki pages, since these are repo-root blob-path files, not wiki pages).
+- Side finding, not fixed (out of scope for this milestone): the live repo
+  homepage and `README.md`'s License section still read "MIT" — both
+  GitHub's own license-detector badge and the README's `## License` body
+  text — despite session 11 on the `docs` branch (relicensing to
+  GPL-3.0-or-later) having merged into `main`. Worth checking next time
+  `docs`-branch work is picked up.
+- Housekeeping: started this session on the `docs` branch with an
+  uncommitted `PLAN.md` diff (per-milestone status-update notes from a
+  prior session) plus untracked `Logo/`/`Sounds/` asset folders. Stashed
+  the `PLAN.md` diff (`git stash`, not popped yet) before switching to
+  `dev`, since milestone 10 is mod development, not docs, per project
+  convention. The stash and the `Logo/`/`Sounds/` folders are docs-branch
+  concerns, untouched here.
+
 ## Session 11 (2026-07-15): relicensed to GPL-3.0-or-later
 
 **Summary: João changed the root `LICENSE` from MIT to GPL-3.0 directly on
