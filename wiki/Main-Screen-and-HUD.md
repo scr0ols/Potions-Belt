@@ -8,6 +8,44 @@ and only accepts:
 - Empty glass bottles (so you can pre-load bottles, or just so drunk
   potions have somewhere to sit).
 
+Like a shulker box, a Potion's Belt occupies exactly **one inventory slot
+per belt**, no matter how full it is — it doesn't stack with other belts
+(unlike ordinary items, which stack up to 64), since each one carries its
+own independent 27-slot inventory as item data.
+
+---
+
+## Crafting
+
+![Potion's Belt crafting recipe: string, leather, string on the top row; rabbit hide, an Ominous Bottle, rabbit hide on the middle row; string, leather, string on the bottom row — crafting into a Potion's Belt](images/potions-belt-crafting.png)
+
+| | | |
+|---|---|---|
+| String | Leather | String |
+| Rabbit Hide | Ominous Bottle | Rabbit Hide |
+| String | Leather | String |
+
+Result: 1 Potion's Belt.
+
+The **Ominous Bottle** (looted from an Ominous Vault in a Trial Chamber) is
+a deliberate gate: a dedicated 27-slot potion container with instant,
+column-based drinking is a real capacity/convenience upgrade, so it costs
+more than fully renewable, zero-effort materials — similar to how a
+shulker box costs shulker shells, not just planks.
+
+It's also a deliberate thematic fit, not just a convenient rare item: the
+Ominous Bottle is itself a bottle carrying a potent effect (Bad Omen), the
+same category of thing the belt is purpose-built to hold and dispense.
+Normally you'd drink it to trigger an Ominous Trial (or a raid); crafting a
+belt spends that same bottle on a different kind of "potent effect" instead
+— permanent, personal mastery over how you carry and drink potions, rather
+than a one-off encounter.
+
+> [!NOTE]
+> Crafting a belt spends the Ominous Bottle outright — it doesn't get
+> returned, and you trade away its usual vanilla use (drinking it to
+> re-trigger Bad Omen for another Ominous Vault).
+
 ---
 
 ## Opening the belt's GUI
