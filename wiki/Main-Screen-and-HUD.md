@@ -17,7 +17,8 @@ box layout):
 - Press <kbd>E</kbd> (the vanilla "Open/Close Inventory" key) while the
   belt is in your **main hand**.
 - Press the dedicated "Open Belt Menu" keybind (unbound by default — see
-  [Keybinds](Keybinds.md) to set it up), which works from either hand.
+  [Column Loadouts & Keybinds](Column-Loadouts.md) to set it up), which
+  works from either hand.
 
 Inside, drag potions and bottles in and out like any other container.
 Anything that isn't a drinkable potion or an empty bottle is rejected,

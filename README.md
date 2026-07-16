@@ -33,7 +33,8 @@ opening any GUI mid-fight.
 > [!TIP]
 > All of Potion's Belt's keybinds are **unbound by default** and fully
 > remappable under **Options > Controls > Potions Belt** — see the
-> [Keybinds wiki page](../../wiki/Keybinds) before your first drink.
+> [Column Loadouts & Keybinds wiki page](../../wiki/Column-Loadouts) before
+> your first drink.
 
 Full behavior spec and edge cases: [PLAN.md](PLAN.md). Full session history
 and the reasoning behind every design decision: [NOTES.md](NOTES.md).

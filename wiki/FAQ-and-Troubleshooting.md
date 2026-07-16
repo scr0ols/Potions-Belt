@@ -14,7 +14,7 @@
 
 You need to hold the **Column Select Modifier** keybind while pressing the
 number key — it's unbound by default, so this does nothing until you bind
-it yourself. See [Keybinds](Keybinds.md).
+it yourself. See [Column Loadouts & Keybinds](Column-Loadouts.md).
 
 ## Scrolling switches my hotbar slot instead of cycling columns
 
