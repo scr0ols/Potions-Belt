@@ -137,7 +137,7 @@ in-game verified; polish, docs, and configurability are ongoing.
 - [ ] Docs pass: community-health files, wiki (in progress)
 - [ ] Configurable settings (scroll direction, no-pre-selector mode,
       combined inventory+belt tab)
-- [ ] Localization: community translation process + initial languages
+- [x] Localization: community translation process + initial languages
 - [ ] Belt skin/texture applier (idea stage, not scoped)
 
 ## License

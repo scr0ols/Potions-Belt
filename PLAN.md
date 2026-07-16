@@ -462,3 +462,16 @@ the modifier is a physically distinct key.)*
     rapid iteration, and whether to rely on vanilla's silent
     fallback-to-English for incomplete translations (current lean) or add a
     build-time completeness check.
+
+    **Status update (2026-07-15): complete.** Decided against a
+    hard-failing completeness check (would contradict the wiki's own
+    documented "partial translations are fine" policy); added a narrower
+    JUnit test (`LangFileConsistencyTest`) that only rejects keys in a
+    non-English lang file that don't exist in `en_us.json` at all (typos/
+    stale entries), which is a real bug distinct from intentional
+    incompleteness. Hardcoded-string audit re-confirmed clean across both
+    `src/main/java` and `src/client/java`. Contribution flow verified
+    end-to-end against the live wiki, which surfaced and fixed a real bug:
+    the "New Translation" and bug-report issue-template links were broken
+    (one `../` too many) both in the local `wiki/` drafts and live on
+    GitHub — see NOTES.md session 11.
