@@ -12,6 +12,8 @@ Language files live at
 using standard Minecraft resource-pack JSON — the same format vanilla and
 every other mod uses.
 
+---
+
 ## Contributing a new language
 
 1. **Claim the language first**: open an issue using the
@@ -26,14 +28,15 @@ every other mod uses.
 4. Open a pull request. See [CONTRIBUTING.md](../CONTRIBUTING.md) for the
    general PR process.
 
+> [!NOTE]
+> Minecraft falls back to English for any key missing from a non-English
+> lang file — a partial translation still works, it just shows English for
+> the gaps. You don't need every key translated before opening a PR, though
+> a complete translation is obviously preferred.
+
+---
+
 ## Updating an existing translation
 
 Same flow — claim it via the new-translation issue template (marking it as
 an update, not a new language), edit the existing file, open a PR.
-
-## What happens if a translation is incomplete
-
-Minecraft falls back to English for any key missing from a non-English lang
-file — a partial translation still works, it just shows English for the
-gaps. You don't need every key translated before opening a PR, though a
-complete translation is obviously preferred.

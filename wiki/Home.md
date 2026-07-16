@@ -6,11 +6,7 @@
 
 </div>
 
-> [!NOTE]
-> These pages are drafted locally in the main repo's `wiki/` folder and
-> need to be copied into the actual GitHub wiki (enable it under repo
-> Settings > Features > Wikis, then create each page with the matching
-> title and paste its content).
+---
 
 ## Pages
 
@@ -22,6 +18,7 @@
 - [FAQ and Troubleshooting](FAQ-and-Troubleshooting.md)
 - [Building from Source](Building-from-Source.md)
 
-For the technical design and full decision history, see
-[PLAN.md](../PLAN.md) and [NOTES.md](../NOTES.md) in the main repo — the
-wiki covers *usage*, those cover *how the mod is built*.
+> [!NOTE]
+> For the technical design and full decision history, see
+> [PLAN.md](../PLAN.md) and [NOTES.md](../NOTES.md) in the main repo — the
+> wiki covers *usage*, those cover *how the mod is built*.

@@ -8,6 +8,8 @@ and only accepts:
 - Empty glass bottles (so you can pre-load bottles, or just so drunk
   potions have somewhere to sit).
 
+---
+
 ## Opening the belt's GUI
 
 Two ways, both open the same 27-slot screen (reuses the vanilla shulker
@@ -24,6 +26,8 @@ including on shift-click.
 You can pick up, drop, or drag the belt around your inventory normally
 even while its own menu is open — nothing is locked.
 
+---
+
 ## Drinking
 
 **Right click** with the belt in either hand to drink — it uses the same
@@ -35,6 +39,8 @@ If the belt has no potions at all (only bottles, or completely empty),
 right click does nothing but show a message and play a short sound —
 no animation plays.
 
+---
+
 ## The HUD preview
 
 Whenever the belt is held in either hand, a small icon plus the potion's
@@ -42,6 +48,8 @@ name appears next to the hotbar (mirroring the position of vanilla's
 offhand-item indicator, on the opposite side). It always shows exactly
 which potion *would* be drunk right now, so you never have to guess before
 committing to the 1.6-second animation.
+
+---
 
 ## Sounds
 

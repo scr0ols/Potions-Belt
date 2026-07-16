@@ -13,6 +13,8 @@ contents stay predictable over time: if column 1 is your Regeneration
 column, it stays your Regeneration column, drink after drink, until you
 manually restock it.
 
+---
+
 ## Picking a column
 
 1. Set up the "Column Select Modifier" keybind (see
@@ -30,6 +32,8 @@ back to row 2, then row 3 of that same column, and only after the whole
 column is empty does it fall back further to the first potion anywhere in
 the belt — so a drink almost never just fails outright unless the belt
 truly has nothing left to drink.
+
+---
 
 ## Two belts, one default
 
