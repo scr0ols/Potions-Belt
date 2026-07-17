@@ -32,8 +32,8 @@ gradlew.bat runClient
 
 The Gradle project (everything you actually build) lives in
 `potions-belt-fabric-1.21.11/`, one level below the repository root — the
-root only holds project documentation (`README.md`, `PLAN.md`, `NOTES.md`,
-this `wiki/` folder). Always run Gradle commands from inside
+root only holds project documentation (`README.md`, this `wiki/` folder).
+Always run Gradle commands from inside
 `potions-belt-fabric-1.21.11/`, not the repo root.
 
 ---

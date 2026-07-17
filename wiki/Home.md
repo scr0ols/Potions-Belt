@@ -16,8 +16,3 @@
 - [FAQ and Troubleshooting](FAQ-and-Troubleshooting.md)
 - [Translations](Translations.md)
 - [Building from Source](Building-from-Source.md)
-
-> [!NOTE]
-> For the technical design and full decision history, see
-> [PLAN.md](../PLAN.md) and [NOTES.md](../NOTES.md) in the main repo — the
-> wiki covers *usage*, those cover *how the mod is built*.

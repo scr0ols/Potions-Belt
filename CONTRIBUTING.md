@@ -40,9 +40,8 @@ Requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
   abstractions, no unneeded error handling/validation for cases that can't
   happen (validate only at real boundaries: user input, network payloads).
 - Don't refactor or clean up code outside the scope of your change.
-- Match the existing project structure (see `PLAN.md`'s Architecture
-  section) rather than introducing a new pattern for something that already
-  has one.
+- Match the existing project structure rather than introducing a new
+  pattern for something that already has one.
 
 ## Commit messages
 

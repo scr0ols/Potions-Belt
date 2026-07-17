@@ -36,9 +36,6 @@ opening any GUI mid-fight.
 > [Column Loadouts & Keybinds wiki page](../../wiki/Column-Loadouts) before
 > your first drink.
 
-Full behavior spec and edge cases: [PLAN.md](PLAN.md). Full session history
-and the reasoning behind every design decision: [NOTES.md](NOTES.md).
-
 ---
 
 ## Requirements
@@ -85,7 +82,6 @@ column-loadout tips.
 ## Repository layout
 
 ```
-PLAN.md / NOTES.md / CLAUDE.md    project docs and session memory
 wiki/                              wiki pages, drafted locally for now
 potions-belt-fabric-1.21.11/       the Fabric mod (Gradle project root)
 ```
