@@ -37,3 +37,7 @@ replay_*.log
 # source design/audio assets (working files, not tracked)
 Logo/
 Sounds/
+
+# local-only development notes, not published (whole folder, not per-file —
+# anything dropped in here stays local by construction)
+c-docs/

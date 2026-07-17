@@ -2,7 +2,7 @@
 
 # Potion's Belt
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11-62B47A)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.1.2%2B-62B47A?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEWcy2yXxmeTwmOSwWKQv2CNvF2KuVp/v1V+vlSDslOBsFF2tkx1tUt0tEpzs0lxsUdwsEa5hVxvr0VtrUNsrEJrq0FqqkBpqT9oqD5npz2Hh4dmpjxkpDpiojhhoTdgoDZfnzVXly2WbEpQkCZsbGx0WER5VTpZPSnN78OwAAAAnElEQVR42jWNCw7CMAxDw/8/CBuMbTBGGPb9b4hbQRtZT3Gfaodd0XXnoVrvrk3dv0vbV8vthrfHMJ0XfdVcbEG71zzxsJpN+HrSOJJHkgNLgoQFwhkQc0QQBkYISEADN1e2Ak+jyhKHlGDOsJS6FCNZhkg2oZMlLbIfdJfUwrKoZpRCjSnzBj8pKfgg1U6ZYYlAheP/ratuocjvvsNMH5BFYTKgAAAAAElFTkSuQmCC&logoColor=white)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-0.18.4%2B-C8A87A)](https://fabricmc.net/)
 [![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-GPL--3.0%2B-blue)](LICENSE)
@@ -33,10 +33,8 @@ opening any GUI mid-fight.
 > [!TIP]
 > All of Potion's Belt's keybinds are **unbound by default** and fully
 > remappable under **Options > Controls > Potions Belt** — see the
-> [Keybinds wiki page](../../wiki/Keybinds) before your first drink.
-
-Full behavior spec and edge cases: [PLAN.md](PLAN.md). Full session history
-and the reasoning behind every design decision: [NOTES.md](NOTES.md).
+> [Column Loadouts & Keybinds wiki page](../../wiki/Column-Loadouts) before
+> your first drink.
 
 ---
 
@@ -81,28 +79,9 @@ column-loadout tips.
 
 ---
 
-## Loader: Fabric (decided, do not revisit)
-
-Why Fabric over (Neo)Forge — both can implement everything this mod needs
-(custom item, container menu, client key interception, custom payloads), so
-the choice was practical:
-
-- A working Fabric Gradle template with coherent pinned versions already
-  existed for this project.
-- Lighter toolchain and faster client launches for iterating on input/GUI
-  behavior.
-- Current, first-class documentation (docs.fabricmc.net) for exactly the
-  patterns this mod uses: screen handlers, custom payloads, mixins.
-- Classic Forge is legacy for 1.21+ (NeoForge is its successor), and
-  NeoForge's item-handler advantage is irrelevant here since vanilla data
-  components already cover item-stored inventories.
-
----
-
 ## Repository layout
 
 ```
-PLAN.md / NOTES.md / CLAUDE.md    project docs and session memory
 wiki/                              wiki pages, drafted locally for now
 potions-belt-fabric-1.21.11/       the Fabric mod (Gradle project root)
 ```
