@@ -33,10 +33,8 @@ opening any GUI mid-fight.
 > [!TIP]
 > All of Potion's Belt's keybinds are **unbound by default** and fully
 > remappable under **Options > Controls > Potions Belt** — see the
-> [Keybinds wiki page](../../wiki/Keybinds) before your first drink.
-
-Full behavior spec and edge cases: [PLAN.md](PLAN.md). Full session history
-and the reasoning behind every design decision: [NOTES.md](NOTES.md).
+> [Column Loadouts & Keybinds wiki page](../../wiki/Column-Loadouts) before
+> your first drink.
 
 ---
 
@@ -81,28 +79,9 @@ column-loadout tips.
 
 ---
 
-## Loader: Fabric (decided, do not revisit)
-
-Why Fabric over (Neo)Forge — both can implement everything this mod needs
-(custom item, container menu, client key interception, custom payloads), so
-the choice was practical:
-
-- A working Fabric Gradle template with coherent pinned versions already
-  existed for this project.
-- Lighter toolchain and faster client launches for iterating on input/GUI
-  behavior.
-- Current, first-class documentation (docs.fabricmc.net) for exactly the
-  patterns this mod uses: screen handlers, custom payloads, mixins.
-- Classic Forge is legacy for 1.21+ (NeoForge is its successor), and
-  NeoForge's item-handler advantage is irrelevant here since vanilla data
-  components already cover item-stored inventories.
-
----
-
 ## Repository layout
 
 ```
-PLAN.md / NOTES.md / CLAUDE.md    project docs and session memory
 wiki/                              wiki pages, drafted locally for now
 potions-belt-fabric-1.21.11/       the Fabric mod (Gradle project root)
 ```

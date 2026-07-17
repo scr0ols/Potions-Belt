@@ -2,13 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "SLS",
-    "SBS",
-    " S "
+    "ROR",
+    "SLS"
   ],
   "key": {
     "S": "minecraft:string",
     "L": "minecraft:leather",
-    "B": "minecraft:glass_bottle"
+    "O": "minecraft:ominous_bottle",
+    "R": "minecraft:rabbit_hide"
   },
   "result": {
     "id": "potions-belt:potions_belt",

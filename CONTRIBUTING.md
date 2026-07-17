@@ -8,20 +8,13 @@ in this project means agreeing to follow it.
 
 ## Ways to contribute
 
-- **Report a bug**: open an issue using the
-  [bug report template](.github/ISSUE_TEMPLATE/bug_report.md).
-- **Suggest a feature**: open an issue using the
-  [feature request template](.github/ISSUE_TEMPLATE/feature_request.md), or
-  start a looser conversation in
-  [Discussions > Ideas](../../discussions/categories/ideas) first if it's
-  still an early-stage idea.
-- **Ask a question**: use
-  [Discussions > Q&A](../../discussions/categories/q-a) rather than an
-  issue.
-- **Translate the mod**: see the wiki's Translations page, and open an issue
-  with the [new translation template](.github/ISSUE_TEMPLATE/new_translation.md)
-  to claim a language before starting.
-- **Fix a bug or implement a feature**: see the workflow below.
+| Want to... | Do this |
+|---|---|
+| Report a bug | Open an issue with the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md). |
+| Suggest a feature | Open an issue with the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md), or start a looser conversation in [Discussions > Ideas](../../discussions/categories/ideas) first if it's still early-stage. |
+| Ask a question | Use [Discussions > Q&A](../../discussions/categories/q-a) rather than an issue. |
+| Translate the mod | See the wiki's Translations page, and claim a language first with the [new translation template](.github/ISSUE_TEMPLATE/new_translation.md). |
+| Fix a bug or implement a feature | See the workflow below. |
 
 ## Development setup
 
@@ -47,14 +40,22 @@ Requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
   abstractions, no unneeded error handling/validation for cases that can't
   happen (validate only at real boundaries: user input, network payloads).
 - Don't refactor or clean up code outside the scope of your change.
-- Match the existing project structure (see `PLAN.md`'s Architecture
-  section) rather than introducing a new pattern for something that already
-  has one.
+- Match the existing project structure rather than introducing a new
+  pattern for something that already has one.
 
 ## Commit messages
 
-Conventional commits, e.g. `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`,
-`perf:`, `test:`. Small commits, one logical change each.
+Conventional commits. Small commits, one logical change each.
+
+| Prefix | Use for |
+|---|---|
+| `feat:` | A new feature or capability |
+| `fix:` | A bug fix |
+| `chore:` | Maintenance with no source behavior change (deps, tooling, gitignore) |
+| `docs:` | Documentation only |
+| `refactor:` | Restructuring code with no behavior change |
+| `perf:` | A performance improvement |
+| `test:` | Adding or fixing tests only |
 
 ## Before opening a pull request
 

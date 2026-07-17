@@ -14,7 +14,7 @@
 
 You need to hold the **Column Select Modifier** keybind while pressing the
 number key — it's unbound by default, so this does nothing until you bind
-it yourself. See [Keybinds](Keybinds.md).
+it yourself. See [Column Loadouts & Keybinds](Column-Loadouts.md).
 
 ## Scrolling switches my hotbar slot instead of cycling columns
 
@@ -43,5 +43,5 @@ accepted. This may change in a future update.
 
 ## I found a bug that isn't covered here
 
-Open a [bug report](../issues/new?template=bug_report.md) with your
+Open a [bug report](../../issues/new?template=bug_report.md) with your
 versions and steps to reproduce.

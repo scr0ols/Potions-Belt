@@ -33,7 +33,7 @@
   contains at least one potion.
 - `Options > Controls > Potions Belt` lists the "Open Belt Menu" and
   "Column Select Modifier" keybinds — both unbound by default, see
-  [Keybinds](Keybinds.md).
+  [Column Loadouts & Keybinds](Column-Loadouts.md).
 
 ---
 
