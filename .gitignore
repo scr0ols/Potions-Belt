@@ -35,8 +35,8 @@ replay_*.log
 *.jfr
 
 # source design/audio assets (working files, not tracked)
-Logo/
-Sounds/
+/Logo/
+/Sounds/
 
 # local-only development notes, not published (whole folder, not per-file —
 # anything dropped in here stays local by construction)
