@@ -1,7 +1,9 @@
 {
-  "itemGroup.potionsbelt": "Example Mod Tab",
-  "block.potionsbelt.example_block": "Example Block",
-  "item.potionsbelt.example_item": "Example Item",
+  "item.potionsbelt.potions_belt": "Potions Belt",
+  "potionsbelt.belt.no_potions": "No potions in the belt",
+  "subtitles.potionsbelt.belt_open": "Belt opens",
+  "subtitles.potionsbelt.bottle_open": "Bottle opens",
+  "subtitles.potionsbelt.bottle_close": "Bottle closes",
 
   "potionsbelt.configuration.title": "Potion's Belt Configs",
   "potionsbelt.configuration.section.potionsbelt.common.toml": "Potion's Belt Configs",
