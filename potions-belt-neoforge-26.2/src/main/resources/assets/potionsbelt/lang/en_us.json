@@ -4,6 +4,9 @@
   "subtitles.potionsbelt.belt_open": "Belt opens",
   "subtitles.potionsbelt.bottle_open": "Bottle opens",
   "subtitles.potionsbelt.bottle_close": "Bottle closes",
+  "key.category.potionsbelt.main": "Potions Belt",
+  "key.potionsbelt.open_menu": "Open Belt Menu",
+  "key.potionsbelt.select_modifier": "Column Select Modifier",
 
   "potionsbelt.configuration.title": "Potion's Belt Configs",
   "potionsbelt.configuration.section.potionsbelt.common.toml": "Potion's Belt Configs",
