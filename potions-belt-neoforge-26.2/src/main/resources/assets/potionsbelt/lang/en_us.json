@@ -1,0 +1,13 @@
+{
+  "itemGroup.potionsbelt": "Example Mod Tab",
+  "block.potionsbelt.example_block": "Example Block",
+  "item.potionsbelt.example_item": "Example Item",
+
+  "potionsbelt.configuration.title": "Potion's Belt Configs",
+  "potionsbelt.configuration.section.potionsbelt.common.toml": "Potion's Belt Configs",
+  "potionsbelt.configuration.section.potionsbelt.common.toml.title": "Potion's Belt Configs",
+  "potionsbelt.configuration.items": "Item List",
+  "potionsbelt.configuration.logDirtBlock": "Log Dirt Block",
+  "potionsbelt.configuration.magicNumberIntroduction": "Magic Number Text",
+  "potionsbelt.configuration.magicNumber": "Magic Number"
+}
