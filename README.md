@@ -2,9 +2,9 @@
 
 # Potion's Belt
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11-62B47A)](https://www.minecraft.net/)
-[![Fabric](https://img.shields.io/badge/Fabric-0.18.4%2B-C8A87A)](https://fabricmc.net/)
-[![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-1.21.11-C8A87A)](https://fabricmc.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-26.2-D7842D)](https://neoforged.net/)
+[![Java](https://img.shields.io/badge/Java-21%2F25-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-GPL--3.0%2B-blue)](LICENSE)
 
 *A dedicated 3x9 potion container with fast, column-based drinking — no more digging through the hotbar.*
@@ -40,12 +40,25 @@ opening any GUI mid-fight.
 
 ## Requirements
 
+Two independent loader targets, same gameplay on both — pick whichever
+loader you already use.
+
+**Fabric**
+
 | | |
 |---|---|
 | Minecraft | 1.21.11 |
 | Fabric Loader | 0.18.4+ |
 | Fabric API | 0.141.3+1.21.11 |
 | Java | 21+ |
+
+**NeoForge**
+
+| | |
+|---|---|
+| Minecraft | 26.2 |
+| NeoForge | 26.2.0.21-beta+ |
+| Java | 25+ |
 
 > [!NOTE]
 > The belt's consumption logic runs server-side, so multiplayer requires
@@ -56,13 +69,21 @@ opening any GUI mid-fight.
 
 ## Installation
 
+**Fabric**
+
 1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11.
 2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for the same
    version and drop it in your `mods/` folder.
 3. Download Potion's Belt and drop it in `mods/` too.
 
+**NeoForge**
+
+1. Install [NeoForge](https://neoforged.net/) for Minecraft 26.2.
+2. Download Potion's Belt and drop it in `mods/`. No separate API mod
+   needed — NeoForge is the mod loader itself.
+
 See the [wiki](../../wiki) for a full usage guide, keybind setup, and
-column-loadout tips.
+column-loadout tips (loader-independent — the gameplay is identical).
 
 ---
 
@@ -84,29 +105,36 @@ column-loadout tips.
 ```
 wiki/                              wiki pages, drafted locally for now
 potions-belt-fabric-1.21.11/       the Fabric mod (Gradle project root)
+potions-belt-neoforge-26.2/        the NeoForge mod (Gradle project root)
 ```
+
+Same gameplay, two independent per-loader Gradle projects — not a shared-core
+multiloader setup. Build and run each from inside its own folder.
 
 ---
 
 ## Build & run
 
-Requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
+**Fabric** — requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
 
-**Linux / macOS**
 ```bash
 ./gradlew build        # produces the mod jar in build/libs/, runs unit tests
 ./gradlew runClient    # launches a dev Minecraft client with the mod
 ```
 
-**Windows**
-```bat
-gradlew.bat build
-gradlew.bat runClient
+**NeoForge** — requires Java 25 (JDK). From `potions-belt-neoforge-26.2/`:
+
+```bash
+./gradlew build        # produces the mod jar in build/libs/
+./gradlew runClient    # launches a dev Minecraft client with the mod
 ```
 
+(Windows: use `gradlew.bat` instead of `./gradlew` in either folder.)
+
 > [!TIP]
-> The built jar ends up in `build/libs/` — drop that jar (not the
-> `-sources.jar`) into your `mods/` folder to test a local build.
+> The built jar ends up in each project's own `build/libs/` — drop that jar
+> (not the `-sources.jar`, where present) into your `mods/` folder to test
+> a local build.
 
 ---
 
@@ -132,8 +160,8 @@ by merging `dev` when a milestone is ready.
 
 ## Status
 
-**In active development.** Core gameplay (milestones 1-6) is complete and
-in-game verified; polish, docs, and configurability are ongoing.
+**In active development.** Core gameplay is complete and in-game verified
+on both loaders; polish, docs, and configurability are ongoing.
 
 - [x] Planning: loader decision, architecture, edge cases
 - [x] Repository setup
@@ -143,6 +171,7 @@ in-game verified; polish, docs, and configurability are ongoing.
 - [x] Column selection: sticky default, modifier-gated hotbar keys + scroll,
       HUD preview
 - [x] Polish: sounds, column-selection feedback, edge-case pass
+- [x] NeoForge port: full gameplay parity with Fabric, in-game verified
 - [ ] Docs pass: community-health files, wiki (in progress)
 - [ ] Configurable settings (scroll direction, no-pre-selector mode,
       combined inventory+belt tab)
