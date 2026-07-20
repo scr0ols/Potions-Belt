@@ -1,0 +1,10 @@
+{
+  "item.potionsbelt.potions_belt": "Cinto de Poções",
+  "potionsbelt.belt.no_potions": "Sem poções no cinto",
+  "subtitles.potionsbelt.belt_open": "Cinto abre-se",
+  "subtitles.potionsbelt.bottle_open": "Frasco abre-se",
+  "subtitles.potionsbelt.bottle_close": "Frasco fecha-se",
+  "key.category.potionsbelt.main": "Cinto de Poções",
+  "key.potionsbelt.open_menu": "Abrir Menu do Cinto",
+  "key.potionsbelt.select_modifier": "Modificador de Seleção de Coluna"
+}

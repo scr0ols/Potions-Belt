@@ -1,0 +1,20 @@
+{
+  "belt_open": {
+    "subtitle": "subtitles.potionsbelt.belt_open",
+    "sounds": [
+      "potionsbelt:belt_open"
+    ]
+  },
+  "bottle_open": {
+    "subtitle": "subtitles.potionsbelt.bottle_open",
+    "sounds": [
+      "potionsbelt:bottle_open"
+    ]
+  },
+  "bottle_close": {
+    "subtitle": "subtitles.potionsbelt.bottle_close",
+    "sounds": [
+      "potionsbelt:bottle_close"
+    ]
+  }
+}

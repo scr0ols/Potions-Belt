@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "com.scr0ols.potionsbelt.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "LivingEntityMixin",
+    "ServerGamePacketListenerImplMixin"
+  ],
+  "client": [
+    "KeybindsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
