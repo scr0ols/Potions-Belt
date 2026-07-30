@@ -33,7 +33,7 @@ public class MouseScrollMixin {
     private void potionsbelt$cycleColumnOnScroll(long window, double xOffset, double yOffset, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
-        if (yOffset == 0 || client.screen != null || player == null
+        if (yOffset == 0 || client.gui.screen() != null || player == null
                 || !BeltKeybinds.SELECT_MODIFIER.isDown() || !PotionsBeltItem.isHeldBy(player)) {
             return;
         }
