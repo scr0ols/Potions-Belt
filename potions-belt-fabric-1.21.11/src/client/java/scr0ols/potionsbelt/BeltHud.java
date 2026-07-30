@@ -2,7 +2,7 @@ package scr0ols.potionsbelt;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -29,7 +29,7 @@ public final class BeltHud {
     private BeltHud() {
     }
 
-    public static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+    public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
         if (player == null) {
@@ -55,9 +55,9 @@ public final class BeltHud {
 
         ItemStack preview = previewPotion(belt);
         if (!preview.isEmpty()) {
-            graphics.renderItem(preview, itemX, itemY);
-            graphics.renderItemDecorations(client.font, preview, itemX, itemY);
-            graphics.drawCenteredString(client.font, preview.getHoverName(), boxX + 14, boxY - 10, 0xFFFFFF);
+            graphics.item(preview, itemX, itemY);
+            graphics.itemDecorations(client.font, preview, itemX, itemY);
+            graphics.centeredText(client.font, preview.getHoverName(), boxX + 14, boxY - 10, 0xFFFFFF);
         }
     }
 

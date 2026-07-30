@@ -3,7 +3,7 @@ package scr0ols.potionsbelt;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 import net.minecraft.client.KeyMapping;
@@ -46,7 +46,7 @@ public final class BeltKeybinds {
     }
 
     private static KeyMapping register(String name) {
-        return KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        return KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.potions-belt." + name, InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
     }
 

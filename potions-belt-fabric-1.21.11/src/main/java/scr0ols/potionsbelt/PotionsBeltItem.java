@@ -118,8 +118,8 @@ public class PotionsBeltItem extends Item {
     }
 
     private static void announceNoPotions(Player player, Level level) {
-        player.displayClientMessage(
-                Component.translatable("potions-belt.belt.no_potions"), true);
+        player.sendOverlayMessage(
+                Component.translatable("potions-belt.belt.no_potions"));
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.BUNDLE_INSERT_FAIL, SoundSource.PLAYERS, 0.5F, 1.0F);
     }
