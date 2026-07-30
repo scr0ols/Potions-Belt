@@ -2,6 +2,13 @@
 
 All notable changes to Potion's Belt are documented in this file.
 
+## [1.0.1] - 2026-07-30
+
+### Changed
+
+- Fabric build updated to Minecraft 26.1.2 (from 1.21.11), matching the
+  NeoForge build's target version. No player-facing behavior change.
+
 ## [1.0.0] - 2026-07-17
 
 ### Added
