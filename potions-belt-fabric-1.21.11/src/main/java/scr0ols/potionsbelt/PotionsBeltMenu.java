@@ -26,9 +26,6 @@ public class PotionsBeltMenu extends AbstractContainerMenu {
         super(PotionsBelt.POTIONS_BELT_MENU, containerId);
         this.container = container;
         this.beltStack = beltStack;
-        if (!beltStack.isEmpty()) {
-            container.addListener(changed -> BeltInventory.save(beltStack, changed));
-        }
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
@@ -42,6 +39,15 @@ public class PotionsBeltMenu extends AbstractContainerMenu {
         }
         for (int col = 0; col < 9; col++) {
             addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
+        }
+    }
+
+    /** Container has no change-listener API anymore; piggyback on the menu's per-tick sync to persist every change (drag/drop, quick-move, etc.) into the belt item, not just on close. */
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        if (!beltStack.isEmpty()) {
+            BeltInventory.save(beltStack, container);
         }
     }
 

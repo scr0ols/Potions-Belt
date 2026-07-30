@@ -18,7 +18,7 @@ in this project means agreeing to follow it.
 
 ## Development setup
 
-Requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
+Requires Java 25 (JDK). From `potions-belt-fabric-1.21.11/`:
 
 ```
 ./gradlew build        # build + run unit tests

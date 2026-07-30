@@ -4,8 +4,12 @@ import java.util.Map;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentInitializers;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -26,6 +30,16 @@ class BeltInventoryTest {
     static void bootstrap() {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
+        // Since item default components (e.g. STICK's stack size, POTION's contents
+        // component) are now bound in a separate data-driven pass instead of at
+        // registration, Bootstrap.bootStrap() alone leaves every item Holder's
+        // components() unbound -- any new ItemStack(...) throws "Components not
+        // bound yet" until this runs too. VanillaRegistries.createLookup() mirrors
+        // what Mojang's own datagen uses to get a HolderLookup.Provider without a
+        // real resource pack / server on the classpath.
+        HolderLookup.Provider registries = VanillaRegistries.createLookup();
+        BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries)
+                .forEach(DataComponentInitializers.PendingComponents::apply);
     }
 
     /** Belt = any stack with a CONTAINER component; slot index -> content. */

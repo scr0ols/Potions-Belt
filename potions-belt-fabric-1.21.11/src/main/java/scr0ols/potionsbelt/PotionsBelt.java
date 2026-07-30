@@ -29,10 +29,10 @@ public class PotionsBelt implements ModInitializer {
 		ModItems.initialize();
 		ModSounds.initialize();
 
-		PayloadTypeRegistry.playC2S().register(SelectColumnPayload.TYPE, SelectColumnPayload.STREAM_CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(SelectColumnPayload.TYPE, SelectColumnPayload.STREAM_CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(SelectColumnPayload.TYPE,
 				(payload, context) -> PotionsBeltItem.onColumnSelected(context.player(), payload.column()));
-		PayloadTypeRegistry.playC2S().register(OpenBeltMenuPayload.TYPE, OpenBeltMenuPayload.STREAM_CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(OpenBeltMenuPayload.TYPE, OpenBeltMenuPayload.STREAM_CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(OpenBeltMenuPayload.TYPE,
 				(payload, context) -> PotionsBeltItem.openMenu(context.player()));
 		ServerPlayConnectionEvents.DISCONNECT.register(
