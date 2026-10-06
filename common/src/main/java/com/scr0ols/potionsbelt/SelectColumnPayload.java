@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 public record SelectColumnPayload(int column) implements CustomPacketPayload {
 
     public static final Type<SelectColumnPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(PotionsBelt.MOD_ID, "select_column"));
+            new Type<>(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "select_column"));
 
     public static final StreamCodec<ByteBuf, SelectColumnPayload> STREAM_CODEC =
             StreamCodec.composite(ByteBufCodecs.VAR_INT, SelectColumnPayload::column, SelectColumnPayload::new);

@@ -23,7 +23,7 @@ public class PotionsBeltMenu extends AbstractContainerMenu {
 
     public PotionsBeltMenu(int containerId, Inventory playerInventory,
                            SimpleContainer container, ItemStack beltStack) {
-        super(PotionsBelt.POTIONS_BELT_MENU.get(), containerId);
+        super(ModMenus.POTIONS_BELT.get(), containerId);
         this.container = container;
         this.beltStack = beltStack;
 

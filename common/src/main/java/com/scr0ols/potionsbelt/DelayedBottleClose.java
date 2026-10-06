@@ -2,7 +2,6 @@ package com.scr0ols.potionsbelt;
 
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,7 +89,7 @@ public class DelayedBottleClose {
         BLOCK_NEXT_DRINK_UNTIL.put(entity.getUUID(), currentTick + ticks);
     }
 
-    public static void tick(ServerTickEvent.Post event) {
+    public static void tick() {
         currentTick++;
         // Entries past their relevant window are dead weight -- without this,
         // a long-running server would accumulate one forever for every
