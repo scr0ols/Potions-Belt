@@ -2,6 +2,24 @@
 
 All notable changes to Potion's Belt are documented in this file.
 
+## [Unreleased] - 1.1.0
+
+### Changed
+
+- Restructured into a single multi-loader project (shared `common` code plus
+  thin Fabric and NeoForge modules). Gameplay is unchanged.
+- Jars are now named `fabric-potions-belt-<version>+<minecraft version>.jar`
+  and `neoforge-potions-belt-<version>+<minecraft version>.jar`.
+- The Fabric build now uses the mod id `potionsbelt` (previously
+  `potions-belt`), matching the NeoForge build.
+
+### Breaking
+
+- **Fabric:** because the mod id changed, belts from a 1.0.x
+  Fabric world are not carried over: existing belts turn into unknown items.
+  Take potions out of belts before updating a Fabric world. NeoForge worlds
+  are unaffected (its id was already `potionsbelt`).
+
 ## [1.0.2] - 2026-07-30
 
 ### Changed
