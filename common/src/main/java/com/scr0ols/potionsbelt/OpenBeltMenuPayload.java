@@ -9,7 +9,7 @@ import net.minecraft.resources.Identifier;
 public record OpenBeltMenuPayload() implements CustomPacketPayload {
 
     public static final Type<OpenBeltMenuPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(PotionsBelt.MOD_ID, "open_belt_menu"));
+            new Type<>(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "open_belt_menu"));
 
     public static final StreamCodec<ByteBuf, OpenBeltMenuPayload> STREAM_CODEC =
             StreamCodec.unit(new OpenBeltMenuPayload());

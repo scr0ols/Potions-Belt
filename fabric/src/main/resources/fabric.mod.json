@@ -11,12 +11,16 @@
         "sources": "https://github.com/scr0ols/Potions-Belt"
     },
     "license": "${license}",
+    "icon": "assets/potionsbelt/icon.png",
     "environment": "*",
     "entrypoints": {
         "main": [
             "com.scr0ols.potionsbelt.PotionsBeltFabric"
         ]
     },
+    "mixins": [
+        "${mod_id}.mixins.json"
+    ],
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": ">=${fabric_version}",

@@ -1,4 +1,4 @@
-package scr0ols.potionsbelt;
+package com.scr0ols.potionsbelt;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LangFileConsistencyTest {
 
     private static final File LANG_DIR =
-            new File("src/main/resources/assets/potions-belt/lang");
+            new File("src/main/resources/assets/potionsbelt/lang");
     private static final Type LANG_MAP_TYPE = new TypeToken<Map<String, String>>() {}.getType();
 
     private static Map<String, String> readLang(File file) throws IOException {

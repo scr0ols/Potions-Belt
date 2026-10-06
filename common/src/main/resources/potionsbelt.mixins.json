@@ -6,9 +6,6 @@
     "LivingEntityMixin",
     "ServerGamePacketListenerImplMixin"
   ],
-  "client": [
-    "KeybindsMixin"
-  ],
   "injectors": {
     "defaultRequire": 1
   },

@@ -1,4 +1,4 @@
-package scr0ols.potionsbelt;
+package com.scr0ols.potionsbelt;
 
 import java.util.Map;
 
