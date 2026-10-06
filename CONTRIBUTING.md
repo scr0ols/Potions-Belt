@@ -30,8 +30,14 @@ Requires Java 25 (JDK). From `potions-belt-fabric-1.21.11/`:
 
 - All development happens on `dev`. Branch your work off `dev`, and target
   `dev` when opening a pull request — not `main`.
-- `main` is the stable branch, updated only by merging `dev` at project
-  milestones. Don't open PRs against it directly.
+- `main` is the stable branch, always targeting the newest supported
+  Minecraft version, updated only by merging `dev` at project milestones.
+  Don't open PRs against it directly.
+- `26.2`, `26.3`, ... hold the released code state for each Minecraft
+  version, created from `main` at release. Don't open PRs against them
+  unless fixing an older version.
+- Name work branches by theme: `feat/...`, `fix/...`, `refactor/...`,
+  `docs/...`, `port/<minecraft version>`.
 
 ## Code style
 

@@ -154,8 +154,13 @@ issues: see [SECURITY.md](SECURITY.md).
 
 ## Branches
 
-Development happens on `dev`; `main` holds the stable state and is updated
-by merging `dev` when a milestone is ready.
+- `dev`: integration branch. Every change lands here through a pull request
+  from its own branch (`feat/...`, `fix/...`, `refactor/...`, `docs/...`).
+- `main`: stable state, always targeting the newest supported Minecraft
+  version. Updated by merging `dev` when a milestone is ready.
+- `26.2`, `26.3`, ...: one branch per Minecraft version, holding the code
+  state released for that version. Created from `main` at release; older ones
+  become maintenance lines that only receive fixes.
 
 ---
 
