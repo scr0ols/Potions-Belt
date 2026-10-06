@@ -5,10 +5,10 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2%2B-62B47A?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEWcy2yXxmeTwmOSwWKQv2CNvF2KuVp/v1V+vlSDslOBsFF2tkx1tUt0tEpzs0lxsUdwsEa5hVxvr0VtrUNsrEJrq0FqqkBpqT9oqD5npz2Hh4dmpjxkpDpiojhhoTdgoDZfnzVXly2WbEpQkCZsbGx0WER5VTpZPSnN78OwAAAAnElEQVR42jWNCw7CMAxDw/8/CBuMbTBGGPb9b4hbQRtZT3Gfaodd0XXnoVrvrk3dv0vbV8vthrfHMJ0XfdVcbEG71zzxsJpN+HrSOJJHkgNLgoQFwhkQc0QQBkYISEADN1e2Ak+jyhKHlGDOsJS6FCNZhkg2oZMlLbIfdJfUwrKoZpRCjSnzBj8pKfgg1U6ZYYlAheP/ratuocjvvsNMH5BFYTKgAAAAAElFTkSuQmCC&logoColor=white)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-0.19.3%2B-C8A87A)](https://fabricmc.net/)
 [![NeoForge](https://img.shields.io/badge/NeoForge-26.2-D7842D)](https://neoforged.net/)
-[![Java](https://img.shields.io/badge/Java-21%2F25-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
+[![Java](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-GPL--3.0%2B-blue)](LICENSE)
 
-*A dedicated 3x9 potion container with fast, column-based drinking — no more digging through the hotbar.*
+*A dedicated 3x9 potion container with fast, column-based drinking â no more digging through the hotbar.*
 
 </div>
 
@@ -22,18 +22,18 @@ opening any GUI mid-fight.
 
 | Feature | Description |
 |---|---|
-| **Drink on right click** | The vanilla 1.6s drink animation and timing — no balance changes, just faster access. |
+| **Drink on right click** | The vanilla 1.6s drink animation and timing â no balance changes, just faster access. |
 | **Column-based loadout** | 3 rows x 9 columns. Dedicate each column to one potion type; drinking only ever replaces the exact slot drunk, so a column's contents never drift. |
 | **Sticky column selection** | Hold the remappable "Column Select" modifier + a hotbar key (1-9) or scroll to pick a column. Your pick is remembered as the default for every future drink, not just the current one. |
 | **Row and belt-wide fallback** | If the selected column's top potion is gone, the belt falls back to row 2, then row 3, of that column; if the whole column is empty, it falls back further to the first potion anywhere in the belt, only failing outright if the belt has none left at all. |
 | **HUD preview** | An icon + name next to the hotbar always shows exactly which potion is about to be drunk. |
-| **Bottles return to the belt** | Drinking turns only that slot into an empty bottle, in place — nothing else shifts. |
+| **Bottles return to the belt** | Drinking turns only that slot into an empty bottle, in place â nothing else shifts. |
 | **Two ways to open the GUI** | A dedicated keybind (either hand), or <kbd>E</kbd> while the belt is specifically your **main-hand** item. |
 | **Custom sounds** | Distinct sounds for opening the belt and for each drink starting/ending. |
 
 > [!TIP]
 > All of Potion's Belt's keybinds are **unbound by default** and fully
-> remappable under **Options > Controls > Potions Belt** — see the
+> remappable under **Options > Controls > Potions Belt** â see the
 > [Column Loadouts & Keybinds wiki page](../../wiki/Column-Loadouts) before
 > your first drink.
 
@@ -41,17 +41,17 @@ opening any GUI mid-fight.
 
 ## Requirements
 
-Two independent loader targets, same gameplay on both — pick whichever
-loader you already use.
+Two builds from one codebase, same gameplay on both: pick whichever loader
+you already use.
 
 **Fabric**
 
 | | |
 |---|---|
-| Minecraft | 1.21.11 |
-| Fabric Loader | 0.18.4+ |
-| Fabric API | 0.141.3+1.21.11 |
-| Java | 21+ |
+| Minecraft | 26.2 |
+| Fabric Loader | 0.19.3+ |
+| Fabric API | 0.156.0+26.2 |
+| Java | 25+ |
 
 **NeoForge**
 
@@ -63,7 +63,7 @@ loader you already use.
 
 > [!NOTE]
 > The belt's consumption logic runs server-side, so multiplayer requires
-> the mod on both the server and every client — see the wiki's
+> the mod on both the server and every client â see the wiki's
 > [Installation](../../wiki/Installation) page.
 
 ---
@@ -72,7 +72,7 @@ loader you already use.
 
 **Fabric**
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11.
+1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.2.
 2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for the same
    version and drop it in your `mods/` folder.
 3. Download Potion's Belt and drop it in `mods/` too.
@@ -81,10 +81,10 @@ loader you already use.
 
 1. Install [NeoForge](https://neoforged.net/) for Minecraft 26.2.
 2. Download Potion's Belt and drop it in `mods/`. No separate API mod
-   needed — NeoForge is the mod loader itself.
+   needed â NeoForge is the mod loader itself.
 
 See the [wiki](../../wiki) for a full usage guide, keybind setup, and
-column-loadout tips (loader-independent — the gameplay is identical).
+column-loadout tips (loader-independent â the gameplay is identical).
 
 ---
 
@@ -92,8 +92,8 @@ column-loadout tips (loader-independent — the gameplay is identical).
 
 | Language | Locale | File |
 |---|---|---|
-| 🇬🇧 English (US) | `en_us` | [`en_us.json`](potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/en_us.json) |
-| 🇵🇹 Portuguese (Portugal) | `pt_pt` | [`pt_pt.json`](potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/pt_pt.json) |
+| ð¬ð§ English (US) | `en_us` | [`en_us.json`](common/src/main/resources/assets/potionsbelt/lang/en_us.json) |
+| ðµð¹ Portuguese (Portugal) | `pt_pt` | [`pt_pt.json`](common/src/main/resources/assets/potionsbelt/lang/pt_pt.json) |
 
 > [!NOTE]
 > Want to add or fix a translation? See the wiki's
@@ -104,50 +104,48 @@ column-loadout tips (loader-independent — the gameplay is identical).
 ## Repository layout
 
 ```
-wiki/                              wiki pages, drafted locally for now
-potions-belt-fabric-1.21.11/       the Fabric mod (Gradle project root)
-potions-belt-neoforge-26.2/        the NeoForge mod (Gradle project root)
+common/      code and resources shared by both loaders (vanilla only)
+fabric/      Fabric glue: entrypoints, registration, networking, keybinds
+neoforge/    NeoForge glue: the same, on NeoForge's APIs
+build-logic/ shared Gradle convention plugins
+wiki/        wiki pages, drafted locally for now
 ```
 
-Same gameplay, two independent per-loader Gradle projects — not a shared-core
-multiloader setup. Build and run each from inside its own folder.
+One Gradle build at the root, one shared codebase: almost everything lives in
+`common/`, the loader modules only hold what cannot be written against
+vanilla alone. Jars are named `<loader>-potions-belt-<mod version>+<minecraft
+version>.jar`.
 
 ---
 
 ## Build & run
 
-**Fabric** — requires Java 21 (JDK). From `potions-belt-fabric-1.21.11/`:
+Requires Java 25 (JDK). From the repository root:
 
 ```bash
-./gradlew build        # produces the mod jar in build/libs/, runs unit tests
-./gradlew runClient    # launches a dev Minecraft client with the mod
+./gradlew build                # builds both loaders, runs unit tests
+./gradlew :fabric:runClient     # dev client with the Fabric build
+./gradlew :neoforge:runClient   # dev client with the NeoForge build
 ```
 
-**NeoForge** — requires Java 25 (JDK). From `potions-belt-neoforge-26.2/`:
-
-```bash
-./gradlew build        # produces the mod jar in build/libs/
-./gradlew runClient    # launches a dev Minecraft client with the mod
-```
-
-(Windows: use `gradlew.bat` instead of `./gradlew` in either folder.)
+(Windows: use `gradlew.bat` instead of `./gradlew`.)
 
 > [!TIP]
-> The built jar ends up in each project's own `build/libs/` — drop that jar
-> (not the `-sources.jar`, where present) into your `mods/` folder to test
-> a local build.
+> The built jars end up in `fabric/build/libs/` and `neoforge/build/libs/` —
+> drop the one for your loader (not the `-sources.jar`) into your `mods/`
+> folder to test a local build.
 
 ---
 
 ## Contributing
 
-Contributions, bug reports, and translations are welcome — see
+Contributions, bug reports, and translations are welcome â see
 [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, and the
 [Code of Conduct](CODE_OF_CONDUCT.md) for community standards. Security
 issues: see [SECURITY.md](SECURITY.md).
 
 > [!WARNING]
-> Target the `dev` branch, not `main`, when opening a pull request — see
+> Target the `dev` branch, not `main`, when opening a pull request â see
 > Branches below.
 
 ---
