@@ -1,7 +1,6 @@
-package scr0ols.potionsbelt;
+package com.scr0ols.potionsbelt;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-
+import com.scr0ols.potionsbelt.platform.ClientServices;
 import net.minecraft.client.player.LocalPlayer;
 
 /**
@@ -57,6 +56,6 @@ public final class ClientBeltState {
                 && BeltInventory.firstPotionSlotInColumn(player.getUseItem(), column) < 0) {
             suppressDrinkUntilRelease = true;
         }
-        ClientPlayNetworking.send(new SelectColumnPayload(column));
+        ClientServices.NETWORK.sendToServer(new SelectColumnPayload(column));
     }
 }
