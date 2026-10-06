@@ -10,7 +10,7 @@ import com.scr0ols.potionsbelt.BeltKeybinds;
 import com.scr0ols.potionsbelt.ClientBeltState;
 import com.scr0ols.potionsbelt.OpenBeltMenuPayload;
 import com.scr0ols.potionsbelt.PotionsBeltItem;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import com.scr0ols.potionsbelt.platform.ClientServices;
 
 /**
  * Vanilla-internals glue that has to run inside Minecraft#handleKeybinds
@@ -94,7 +94,7 @@ public class KeybindsMixin {
             return;
         }
         if (client.options.keyInventory.consumeClick()) {
-            ClientPacketDistributor.sendToServer(new OpenBeltMenuPayload());
+            ClientServices.NETWORK.sendToServer(new OpenBeltMenuPayload());
         }
     }
 

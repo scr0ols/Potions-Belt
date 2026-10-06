@@ -10,7 +10,7 @@ public class Services {
 
     public static final IRegistryHelper REGISTRY = load(IRegistryHelper.class);
 
-    private static <T> T load(Class<T> clazz) {
+    static <T> T load(Class<T> clazz) {
         T loadedService = ServiceLoader.load(clazz, Services.class.getClassLoader())
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));

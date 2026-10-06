@@ -1,7 +1,7 @@
 package com.scr0ols.potionsbelt;
 
+import com.scr0ols.potionsbelt.platform.ClientServices;
 import net.minecraft.client.player.LocalPlayer;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
  * Client-side mirror of the player's sticky belt default column (1-9), plus
@@ -56,6 +56,6 @@ public final class ClientBeltState {
                 && BeltInventory.firstPotionSlotInColumn(player.getUseItem(), column) < 0) {
             suppressDrinkUntilRelease = true;
         }
-        ClientPacketDistributor.sendToServer(new SelectColumnPayload(column));
+        ClientServices.NETWORK.sendToServer(new SelectColumnPayload(column));
     }
 }

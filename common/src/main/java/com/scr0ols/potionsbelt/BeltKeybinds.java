@@ -5,13 +5,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import com.scr0ols.potionsbelt.platform.ClientServices;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
  * Dedicated, remappable keybindings for the belt: opening its menu, and a
@@ -32,15 +27,12 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
  * reinterpretation behind a modifier avoids the collision entirely, since
  * the modifier is a physically distinct key from 1-9.
  */
-@EventBusSubscriber(modid = PotionsBelt.MOD_ID, value = Dist.CLIENT)
 public final class BeltKeybinds {
 
-    // KeyMapping.Category.register(Identifier) is deprecated in favor of constructing the
-    // record directly and registering it via RegisterKeyMappingsEvent#registerCategory below.
-    private static final KeyMapping.Category CATEGORY =
-            new KeyMapping.Category(Identifier.fromNamespaceAndPath(PotionsBelt.MOD_ID, "main"));
+    public static final KeyMapping.Category CATEGORY =
+            new KeyMapping.Category(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "main"));
 
-    private static final KeyMapping OPEN_MENU = create("open_menu");
+    public static final KeyMapping OPEN_MENU = create("open_menu");
     public static final KeyMapping SELECT_MODIFIER = create("select_modifier");
 
     private BeltKeybinds() {
@@ -51,22 +43,15 @@ public final class BeltKeybinds {
                 InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY);
     }
 
-    @SubscribeEvent
-    static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        event.registerCategory(CATEGORY);
-        event.register(OPEN_MENU);
-        event.register(SELECT_MODIFIER);
-    }
-
-    @SubscribeEvent
-    static void onClientTick(ClientTickEvent.Post event) {
-        LocalPlayer player = Minecraft.getInstance().player;
+    /** Called every client tick by each loader's client entrypoint. */
+    public static void tick(Minecraft client) {
+        LocalPlayer player = client.player;
         if (player == null || !PotionsBeltItem.isHeldBy(player)) {
             OPEN_MENU.consumeClick();
             return;
         }
         while (OPEN_MENU.consumeClick()) {
-            ClientPacketDistributor.sendToServer(new OpenBeltMenuPayload());
+            ClientServices.NETWORK.sendToServer(new OpenBeltMenuPayload());
         }
     }
 }
