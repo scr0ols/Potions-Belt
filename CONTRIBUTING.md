@@ -3,7 +3,7 @@
 Thanks for considering contributing! This is a small personal project, but
 outside contributions (bug reports, fixes, translations, ideas) are welcome.
 
-Please also read the [Code of Conduct](CODE_OF_CONDUCT.md) — participation
+Please also read the [Code of Conduct](CODE_OF_CONDUCT.md) â participation
 in this project means agreeing to follow it.
 
 ## Ways to contribute
@@ -18,18 +18,23 @@ in this project means agreeing to follow it.
 
 ## Development setup
 
-Requires Java 25 (JDK). From `potions-belt-fabric-1.21.11/`:
+Requires Java 25 (JDK). From the repository root:
 
 ```
-./gradlew build        # build + run unit tests
-./gradlew test          # unit tests only
-./gradlew runClient     # launch a dev Minecraft client with the mod loaded
+./gradlew build                # build both loaders + run unit tests
+./gradlew test                 # unit tests only
+./gradlew :fabric:runClient     # dev client with the Fabric build
+./gradlew :neoforge:runClient   # dev client with the NeoForge build
 ```
+
+Shared code and resources go in `common/`; only loader-specific glue goes in
+`fabric/` or `neoforge/`. See [PORTING.md](PORTING.md) for how the Minecraft
+version is bumped.
 
 ## Branch workflow
 
 - All development happens on `dev`. Branch your work off `dev`, and target
-  `dev` when opening a pull request — not `main`.
+  `dev` when opening a pull request â not `main`.
 - `main` is the stable branch, always targeting the newest supported
   Minecraft version, updated only by merging `dev` at project milestones.
   Don't open PRs against it directly.
@@ -37,12 +42,12 @@ Requires Java 25 (JDK). From `potions-belt-fabric-1.21.11/`:
   version, created from `main` at release. Don't open PRs against them
   unless fixing an older version.
 - Name work branches by theme: `feat/...`, `fix/...`, `refactor/...`,
-  `docs/...`, `port/<minecraft version>`.
+  `docs-...`, `port/<minecraft version>`.
 
 ## Code style
 
 - Everything in English: code, comments, identifiers, commit messages, docs.
-- Do the simplest thing that solves the problem — no speculative
+- Do the simplest thing that solves the problem â no speculative
   abstractions, no unneeded error handling/validation for cases that can't
   happen (validate only at real boundaries: user input, network payloads).
 - Don't refactor or clean up code outside the scope of your change.
@@ -65,12 +70,13 @@ Conventional commits. Small commits, one logical change each.
 
 ## Before opening a pull request
 
-- Run `./gradlew build` — a green build (including unit tests) is required.
+- Run `./gradlew build` â a green build (including unit tests) is required.
 - If your change touches gameplay behavior, test it in-game via
-  `./gradlew runClient` — the unit test suite intentionally doesn't cover
+  `./gradlew :fabric:runClient` or `:neoforge:runClient` — the unit test suite
+  intentionally doesn't cover
   everything (e.g. mixin-apply errors only surface at actual game launch,
   never during `./gradlew test`).
-- Fill out the pull request template — it's applied automatically.
+- Fill out the pull request template â it's applied automatically.
 
 ## Questions
 

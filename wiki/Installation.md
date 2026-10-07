@@ -2,26 +2,50 @@
 
 ## Requirements
 
+Two builds, same gameplay: pick the loader you already use.
+
+**Fabric**
+
 | | |
 |---|---|
-| Minecraft | 1.21.11 |
-| Fabric Loader | 0.18.4+ |
-| Fabric API | 0.141.3+1.21.11 |
-| Java | 21+ |
+| Minecraft | 26.2 |
+| Fabric Loader | 0.19.3+ |
+| Fabric API | 0.156.0+26.2 |
+| Java | 25+ |
+
+**NeoForge**
+
+| | |
+|---|---|
+| Minecraft | 26.2 |
+| NeoForge | 26.2.0.21-beta+ |
+| Java | 25+ |
 
 ---
 
 ## Installing
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11.
+**Fabric**
+
+1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.2.
    The Fabric installer sets up a matching launcher profile for you.
-2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for 1.21.11
+2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for 26.2
    and place the jar in your `.minecraft/mods/` folder. Potion's Belt
    depends on it and won't load without it.
-3. Download Potion's Belt and place its jar in the same `mods/` folder.
-4. Launch the Fabric profile. If everything loaded correctly, you'll find
-   the belt item in the creative inventory (or craft it — see
-   [Main Screen and HUD](Main-Screen-and-HUD.md) for the recipe).
+3. Download the `fabric-potions-belt` jar and place it in the same `mods/`
+   folder.
+4. Launch the Fabric profile.
+
+**NeoForge**
+
+1. Install [NeoForge](https://neoforged.net/) for Minecraft 26.2.
+2. Download the `neoforge-potions-belt` jar and place it in `.minecraft/mods/`.
+   No separate API mod is needed.
+3. Launch the NeoForge profile.
+
+If everything loaded correctly, you'll find the belt item in the creative
+inventory (or craft it, see [Main Screen and HUD](Main-Screen-and-HUD.md) for
+the recipe).
 
 ---
 

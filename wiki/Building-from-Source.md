@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- JDK 21.
+- JDK 25 (Minecraft 26.x runs on Java 25).
 - Git.
 
 ---
@@ -11,30 +11,43 @@
 
 ```
 git clone https://github.com/scr0ols/Potions-Belt.git
-cd Potions-Belt/potions-belt-fabric-1.21.11
+cd Potions-Belt
 ```
 
 **Linux / macOS**
 ```bash
-./gradlew build        # produces the mod jar in build/libs/, runs unit tests
-./gradlew runClient    # launches a dev client with the mod already loaded
+./gradlew build                # builds both loaders and runs unit tests
+./gradlew :fabric:runClient    # launches a dev client with the Fabric build
+./gradlew :neoforge:runClient  # launches a dev client with the NeoForge build
 ```
 
 **Windows**
 ```bat
 gradlew.bat build
-gradlew.bat runClient
+gradlew.bat :fabric:runClient
+gradlew.bat :neoforge:runClient
 ```
+
+The mod jars end up in `fabric/build/libs/` and `neoforge/build/libs/`, named
+like `fabric-potions-belt-1.1.0+26.3.jar` (loader, mod version, Minecraft
+version). Ignore the `-sources.jar` files.
 
 ---
 
 ## Repository layout
 
-The Gradle project (everything you actually build) lives in
-`potions-belt-fabric-1.21.11/`, one level below the repository root — the
-root only holds project documentation (`README.md`, this `wiki/` folder).
-Always run Gradle commands from inside
-`potions-belt-fabric-1.21.11/`, not the repo root.
+One Gradle build at the repository root:
+
+```
+common/      code and resources shared by both loaders (vanilla only)
+fabric/      Fabric glue: entrypoints, registration, networking, keybinds
+neoforge/    NeoForge glue: the same, on NeoForge's APIs
+build-logic/ shared Gradle convention plugins
+wiki/        wiki pages, drafted locally
+```
+
+Almost all of the mod lives in `common/`. A loader module only holds what
+cannot be written against vanilla alone.
 
 ---
 
@@ -47,8 +60,9 @@ Always run Gradle commands from inside
 > [!WARNING]
 > Unit tests cover pure logic (slot-picking, fallback rules) but **cannot**
 > catch mixin-apply errors, which only surface when the game actually
-> launches (`./gradlew runClient`). A green `./gradlew build` is necessary
-> but not sufficient proof that a change involving mixins is safe.
+> launches (`./gradlew :fabric:runClient` or `:neoforge:runClient`). A green
+> `./gradlew build` is necessary but not sufficient proof that a change
+> involving mixins is safe.
 
 ---
 

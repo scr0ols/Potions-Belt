@@ -8,7 +8,7 @@ Potion's Belt currently ships with:
 | Portuguese (Portugal) | `pt_pt.json` |
 
 Language files live at
-`potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/`,
+`common/src/main/resources/assets/potionsbelt/lang/`,
 using standard Minecraft resource-pack JSON — the same format vanilla and
 every other mod uses.
 
