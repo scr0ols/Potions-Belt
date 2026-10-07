@@ -12,6 +12,8 @@ All notable changes to Potion's Belt are documented in this file.
   and `neoforge-potions-belt-<version>+<minecraft version>.jar`.
 - The Fabric build now uses the mod id `potionsbelt` (previously
   `potions-belt`), matching the NeoForge build.
+- Updated to Minecraft 26.3 (NeoForge 26.3.0.52-beta, Fabric Loader 0.19.5+,
+  Fabric API 0.162.0+26.3). 26.2 stays available on the `26.2` branch.
 
 ### Breaking
 
