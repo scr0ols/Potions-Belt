@@ -153,7 +153,7 @@ issues: see [SECURITY.md](SECURITY.md).
 ## Branches
 
 - `dev`: integration branch. Every change lands here through a pull request
-  from its own branch (`feat/...`, `fix/...`, `refactor/...`, `docs/...`).
+  from its own branch (`feat/...`, `fix/...`, `refactor/...`, `docs-...`).
 - `main`: stable state, always targeting the newest supported Minecraft
   version. Updated by merging `dev` when a milestone is ready.
 - `26.2`, `26.3`, ...: one branch per Minecraft version, holding the code

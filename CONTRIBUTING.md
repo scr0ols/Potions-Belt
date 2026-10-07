@@ -42,7 +42,7 @@ version is bumped.
   version, created from `main` at release. Don't open PRs against them
   unless fixing an older version.
 - Name work branches by theme: `feat/...`, `fix/...`, `refactor/...`,
-  `docs/...`, `port/<minecraft version>`.
+  `docs-...`, `port/<minecraft version>`.
 
 ## Code style
 
