@@ -2,7 +2,7 @@
 
 All notable changes to Potion's Belt are documented in this file.
 
-## [Unreleased] - 1.1.0
+## [1.1.0] - 2026-10-13
 
 ### Changed
 
