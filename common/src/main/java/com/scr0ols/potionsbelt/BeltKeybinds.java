@@ -40,7 +40,7 @@ public final class BeltKeybinds {
 
     private static KeyMapping create(String name) {
         return new KeyMapping("key.potionsbelt." + name,
-                InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY);
+                InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), CATEGORY);
     }
 
     /** Called every client tick by each loader's client entrypoint. */

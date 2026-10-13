@@ -34,10 +34,10 @@ class BeltInventoryTest {
         // component) are now bound in a separate data-driven pass instead of at
         // registration, Bootstrap.bootStrap() alone leaves every item Holder's
         // components() unbound -- any new ItemStack(...) throws "Components not
-        // bound yet" until this runs too. VanillaRegistries.createLookup() mirrors
+        // bound yet" until this runs too. VanillaRegistries.createWorldLookup() mirrors
         // what Mojang's own datagen uses to get a HolderLookup.Provider without a
         // real resource pack / server on the classpath.
-        HolderLookup.Provider registries = VanillaRegistries.createLookup();
+        HolderLookup.Provider registries = VanillaRegistries.createWorldLookup();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries)
                 .forEach(DataComponentInitializers.PendingComponents::apply);
     }

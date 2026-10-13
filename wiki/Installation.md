@@ -8,17 +8,17 @@ Two builds, same gameplay: pick the loader you already use.
 
 | | |
 |---|---|
-| Minecraft | 26.2 |
-| Fabric Loader | 0.19.3+ |
-| Fabric API | 0.156.0+26.2 |
+| Minecraft | 26.3 |
+| Fabric Loader | 0.19.5+ |
+| Fabric API | 0.162.0+26.3 |
 | Java | 25+ |
 
 **NeoForge**
 
 | | |
 |---|---|
-| Minecraft | 26.2 |
-| NeoForge | 26.2.0.21-beta+ |
+| Minecraft | 26.3 |
+| NeoForge | 26.3.0.52-beta+ |
 | Java | 25+ |
 
 ---
@@ -27,9 +27,9 @@ Two builds, same gameplay: pick the loader you already use.
 
 **Fabric**
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.2.
+1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.3.
    The Fabric installer sets up a matching launcher profile for you.
-2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for 26.2
+2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for 26.3
    and place the jar in your `.minecraft/mods/` folder. Potion's Belt
    depends on it and won't load without it.
 3. Download the `fabric-potions-belt` jar and place it in the same `mods/`
@@ -38,7 +38,7 @@ Two builds, same gameplay: pick the loader you already use.
 
 **NeoForge**
 
-1. Install [NeoForge](https://neoforged.net/) for Minecraft 26.2.
+1. Install [NeoForge](https://neoforged.net/) for Minecraft 26.3.
 2. Download the `neoforge-potions-belt` jar and place it in `.minecraft/mods/`.
    No separate API mod is needed.
 3. Launch the NeoForge profile.

@@ -2,9 +2,9 @@
 
 # Potion's Belt
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-26.2%2B-62B47A?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEWcy2yXxmeTwmOSwWKQv2CNvF2KuVp/v1V+vlSDslOBsFF2tkx1tUt0tEpzs0lxsUdwsEa5hVxvr0VtrUNsrEJrq0FqqkBpqT9oqD5npz2Hh4dmpjxkpDpiojhhoTdgoDZfnzVXly2WbEpQkCZsbGx0WER5VTpZPSnN78OwAAAAnElEQVR42jWNCw7CMAxDw/8/CBuMbTBGGPb9b4hbQRtZT3Gfaodd0XXnoVrvrk3dv0vbV8vthrfHMJ0XfdVcbEG71zzxsJpN+HrSOJJHkgNLgoQFwhkQc0QQBkYISEADN1e2Ak+jyhKHlGDOsJS6FCNZhkg2oZMlLbIfdJfUwrKoZpRCjSnzBj8pKfgg1U6ZYYlAheP/ratuocjvvsNMH5BFYTKgAAAAAElFTkSuQmCC&logoColor=white)](https://www.minecraft.net/)
-[![Fabric](https://img.shields.io/badge/Fabric-0.19.3%2B-C8A87A)](https://fabricmc.net/)
-[![NeoForge](https://img.shields.io/badge/NeoForge-26.2-D7842D)](https://neoforged.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.3%2B-62B47A?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEWcy2yXxmeTwmOSwWKQv2CNvF2KuVp/v1V+vlSDslOBsFF2tkx1tUt0tEpzs0lxsUdwsEa5hVxvr0VtrUNsrEJrq0FqqkBpqT9oqD5npz2Hh4dmpjxkpDpiojhhoTdgoDZfnzVXly2WbEpQkCZsbGx0WER5VTpZPSnN78OwAAAAnElEQVR42jWNCw7CMAxDw/8/CBuMbTBGGPb9b4hbQRtZT3Gfaodd0XXnoVrvrk3dv0vbV8vthrfHMJ0XfdVcbEG71zzxsJpN+HrSOJJHkgNLgoQFwhkQc0QQBkYISEADN1e2Ak+jyhKHlGDOsJS6FCNZhkg2oZMlLbIfdJfUwrKoZpRCjSnzBj8pKfgg1U6ZYYlAheP/ratuocjvvsNMH5BFYTKgAAAAAElFTkSuQmCC&logoColor=white)](https://www.minecraft.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-0.19.5%2B-C8A87A)](https://fabricmc.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-26.3-D7842D)](https://neoforged.net/)
 [![Java](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-GPL--3.0%2B-blue)](LICENSE)
 
@@ -48,17 +48,17 @@ you already use.
 
 | | |
 |---|---|
-| Minecraft | 26.2 |
-| Fabric Loader | 0.19.3+ |
-| Fabric API | 0.156.0+26.2 |
+| Minecraft | 26.3 |
+| Fabric Loader | 0.19.5+ |
+| Fabric API | 0.162.0+26.3 |
 | Java | 25+ |
 
 **NeoForge**
 
 | | |
 |---|---|
-| Minecraft | 26.2 |
-| NeoForge | 26.2.0.21-beta+ |
+| Minecraft | 26.3 |
+| NeoForge | 26.3.0.52-beta+ |
 | Java | 25+ |
 
 > [!NOTE]
@@ -72,14 +72,14 @@ you already use.
 
 **Fabric**
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.2.
+1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.3.
 2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for the same
    version and drop it in your `mods/` folder.
 3. Download Potion's Belt and drop it in `mods/` too.
 
 **NeoForge**
 
-1. Install [NeoForge](https://neoforged.net/) for Minecraft 26.2.
+1. Install [NeoForge](https://neoforged.net/) for Minecraft 26.3.
 2. Download Potion's Belt and drop it in `mods/`. No separate API mod
    needed â NeoForge is the mod loader itself.
 
