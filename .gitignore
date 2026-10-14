@@ -41,3 +41,6 @@ replay_*.log
 # local-only development notes, not published (whole folder, not per-file —
 # anything dropped in here stays local by construction)
 c-docs/
+
+# multi-loader dev runs
+runs/

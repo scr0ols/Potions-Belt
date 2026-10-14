@@ -6,11 +6,8 @@
 name: build
 on: [pull_request, push]
 
-defaults:
-  run:
-    working-directory: potions-belt-fabric-1.21.11
-
 jobs:
+  # The multi-loader build at the repository root (common, fabric, neoforge).
   build:
     runs-on: ubuntu-24.04
     steps:
@@ -31,4 +28,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
-          path: potions-belt-fabric-1.21.11/build/libs/
+          path: |
+            fabric/build/libs/
+            neoforge/build/libs/

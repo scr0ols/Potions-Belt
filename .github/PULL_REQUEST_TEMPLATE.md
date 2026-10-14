@@ -16,7 +16,7 @@ Closes #
 
 ## Checklist
 
-- [ ] `./gradlew build` passes locally (from `potions-belt-fabric-1.21.11/`)
+- [ ] `./gradlew build` passes locally (from the repository root)
 - [ ] Existing unit tests pass (`./gradlew test`)
 - [ ] I tested this in-game (`./gradlew runClient`), where applicable
 - [ ] I targeted the `dev` branch, not `main`

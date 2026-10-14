@@ -12,7 +12,7 @@ Which language/locale are you translating (e.g. `de_de`, `fr_fr`)? Use the
 
 **Type**
 - [ ] New language (doesn't exist yet under
-      `potions-belt-fabric-1.21.11/src/main/resources/assets/potions-belt/lang/`)
+      `common/src/main/resources/assets/potionsbelt/lang/`)
 - [ ] Update to an existing translation (outdated or has errors)
 
 **Status**

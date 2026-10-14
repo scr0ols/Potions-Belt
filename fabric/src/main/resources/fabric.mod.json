@@ -1,0 +1,34 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "contact": {
+        "sources": "https://github.com/scr0ols/Potions-Belt"
+    },
+    "license": "${license}",
+    "icon": "assets/potionsbelt/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "client": [
+            "com.scr0ols.potionsbelt.PotionsBeltFabricClient"
+        ],
+        "main": [
+            "com.scr0ols.potionsbelt.PotionsBeltFabric"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json",
+        "${mod_id}.fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": ">=${fabric_version}",
+        "minecraft": "~${minecraft_version}",
+        "java": ">=${java_version}"
+    }
+}

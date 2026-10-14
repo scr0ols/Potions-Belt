@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.scr0ols.potionsbelt.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "MouseScrollMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
